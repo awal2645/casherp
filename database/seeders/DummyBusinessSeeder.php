@@ -1866,6 +1866,8 @@ $packages = [
             $this->warn('Dummy catalog skipped: '.$e->getMessage());
             $this->info('Demo logins are still available. Username / password 123456.');
         }
+
+        $this->seedDemoLogins();
     }
 
     private function seedDemoLogins(): void
@@ -1947,12 +1949,14 @@ $packages = [
                     'allow_login' => 1,
                     'status' => 'active',
                     'user_type' => 'user',
+                    'business_id' => $businessId,
                     'updated_at' => $now,
                 ]));
+                $this->attachDemoAdminRole((int) $existingId, (int) $businessId);
                 continue;
             }
 
-            DB::table('users')->insert($this->filterColumns('users', [
+            $newId = DB::table('users')->insertGetId($this->filterColumns('users', [
                 'surname' => $user['surname'],
                 'first_name' => $user['first_name'],
                 'last_name' => $user['last_name'],
@@ -1969,12 +1973,20 @@ $packages = [
                 'created_at' => $now,
                 'updated_at' => $now,
             ]));
+            $this->attachDemoAdminRole((int) $newId, (int) $businessId);
         }
 
         foreach ($businessIds as $id) {
             $ownerId = DB::table('users')->where('business_id', $id)->orderBy('id')->value('id');
+            $businessUpdate = [];
             if ($ownerId && Schema::hasColumn('business', 'owner_id')) {
-                DB::table('business')->where('id', $id)->update(['owner_id' => $ownerId]);
+                $businessUpdate['owner_id'] = $ownerId;
+            }
+            if (Schema::hasColumn('business', 'is_active')) {
+                $businessUpdate['is_active'] = 1;
+            }
+            if ($businessUpdate !== []) {
+                DB::table('business')->where('id', $id)->update($businessUpdate);
             }
         }
 
@@ -2016,6 +2028,65 @@ $packages = [
         }
 
         return $clean;
+    }
+
+    private function attachDemoAdminRole(int $userId, int $businessId): void
+    {
+        try {
+            $user = User::find($userId);
+            if (! $user || ! Schema::hasTable('roles') || ! Schema::hasTable('permissions')) {
+                return;
+            }
+
+            $permissionNames = [
+                'dashboard.data',
+                'sell.view',
+                'sell.create',
+                'sell.update',
+                'sell.delete',
+                'access_all_locations',
+            ];
+            $now = now();
+            foreach ($permissionNames as $name) {
+                if (! DB::table('permissions')->where('name', $name)->where('guard_name', 'web')->exists()) {
+                    DB::table('permissions')->insert($this->filterColumns('permissions', [
+                        'name' => $name,
+                        'guard_name' => 'web',
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]));
+                }
+            }
+
+            $roleName = 'Admin#'.$businessId;
+            $role = Role::firstOrCreate(
+                ['name' => $roleName, 'guard_name' => 'web'],
+                $this->filterColumns('roles', [
+                    'name' => $roleName,
+                    'guard_name' => 'web',
+                    'business_id' => $businessId,
+                    'is_default' => 1,
+                ])
+            );
+
+            $permissions = Permission::query()
+                ->where('guard_name', 'web')
+                ->whereIn('name', $permissionNames)
+                ->get();
+            if ($permissions->isNotEmpty()) {
+                $role->syncPermissions($permissions);
+            }
+
+            if (! $user->hasRole($role->name)) {
+                $user->assignRole($role->name);
+            }
+
+            if (class_exists(\Spatie\Permission\PermissionRegistrar::class)) {
+                app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+            }
+        } catch (\Throwable $e) {
+            $this->warn('Could not attach demo role for user #'.$userId.': '.$e->getMessage());
+        }
     }
 
     private function info(string $message): void

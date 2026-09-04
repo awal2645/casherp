@@ -31,7 +31,7 @@ class SetSessionData
         if ($sessionBusinessId > 0) {
             $business = $user->accessibleBusinesses()
                 ->whereKey($sessionBusinessId)
-                ->where('is_active', true)
+                ->active()
                 ->with('currency')
                 ->first();
         }

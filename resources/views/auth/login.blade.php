@@ -28,7 +28,11 @@
         <div class="login-card reveal">
             <div class="login-form-col">
                 <h2>Log in to CashERP</h2>
-                <p class="muted">Access your account to continue.</p>
+                <p class="muted">Use your username or email address, then your password.</p>
+
+                @if ($errors->any())
+                    <div class="field-error" role="alert">{{ $errors->first() }}</div>
+                @endif
 
                 @if (config('app.env') == 'demo')
                     <div class="demo-note">Demo mode: use username <strong>admin</strong> / password <strong>123456</strong></div>

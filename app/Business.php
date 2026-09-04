@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Business extends Model
 {
@@ -184,6 +185,26 @@ class Business extends Model
             Business::where('id', $business_id)
                 ->update($details);
         }
+    }
+
+    public function scopeActive($query)
+    {
+        if (! Schema::hasColumn($this->getTable(), 'is_active')) {
+            return $query;
+        }
+
+        return $query->where($this->qualifyColumn('is_active'), 1);
+    }
+
+    public function isCurrentlyActive(): bool
+    {
+        if (! Schema::hasColumn($this->getTable(), 'is_active')) {
+            return true;
+        }
+
+        $value = $this->getAttribute('is_active');
+
+        return $value === null || (bool) $value;
     }
 
     public function getBusinessAddressAttribute()

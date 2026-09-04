@@ -18,7 +18,7 @@ class BusinessContextService
 
     public function activate(Request $request, User $user, Business $business): void
     {
-        abort_unless($business->is_active, 403, 'The selected company is inactive.');
+        abort_unless($business->isCurrentlyActive(), 403, 'The selected company is inactive.');
         abort_unless($user->canAccessBusiness($business->id), 403, 'You do not have access to the selected company.');
 
         // business_id is the legacy last-active-company pointer. The session is
@@ -38,7 +38,13 @@ class BusinessContextService
             'cd_default_landing_done',
         ]);
 
-        $currency = $business->currency;
+        $currency = $business->currency
+            ?: \App\Currency::find($business->currency_id)
+            ?: \App\Currency::where('code', 'USD')->first()
+            ?: \App\Currency::query()->first();
+
+        abort_if(empty($currency), 500, 'No currency is available for this company.');
+
         $request->session()->put('user', [
             'id' => $user->id,
             'surname' => $user->surname,
@@ -66,7 +72,7 @@ class BusinessContextService
     {
         $current = $user->accessibleBusinesses()
             ->whereKey($user->business_id)
-            ->where('is_active', true)
+            ->active()
             ->with('currency')
             ->first();
 
@@ -75,7 +81,7 @@ class BusinessContextService
         }
 
         return $user->accessibleBusinesses()
-            ->where('is_active', true)
+            ->active()
             ->with('currency')
             ->orderByRaw('CASE WHEN owner_id = ? THEN 0 ELSE 1 END', [$user->id])
             ->orderBy('name')

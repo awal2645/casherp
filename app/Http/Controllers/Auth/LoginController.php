@@ -9,6 +9,8 @@ use App\Utils\ModuleUtil;
 use App\Services\BusinessContextService;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use App\Rules\ReCaptcha;
 
 
@@ -71,9 +73,32 @@ class LoginController extends Controller
         return 'username';
     }
 
+    /**
+     * The login form accepts email or username. Dummy accounts use a
+     * username like `cashier` with a different email address.
+     */
+    protected function attemptLogin(Request $request)
+    {
+        $login = (string) $request->input($this->username());
+        $password = (string) $request->input('password');
+        $remember = $request->filled('remember');
+
+        if (Auth::attempt(['username' => $login, 'password' => $password], $remember)) {
+            return true;
+        }
+
+        return Auth::attempt(['email' => $login, 'password' => $password], $remember);
+    }
+
     public function logout()
     {
-        $this->businessUtil->activityLog(auth()->user(), 'logout');
+        try {
+            if (auth()->user()) {
+                $this->businessUtil->activityLog(auth()->user(), 'logout');
+            }
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         request()->session()->flush();
         \Auth::logout();
@@ -108,9 +133,18 @@ class LoginController extends Controller
             $user->save();
         }
 
-        $this->businessUtil->activityLog($user, 'login', null, [], false, $business->id);
+        $this->businessContext->activate($request, $user, $business);
+        try {
+            $this->businessUtil->activityLog($user, 'login', null, [], false, $business->id);
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
-        if ($user->status != 'active') {
+        $status = $user->getAttribute('status');
+        if (Schema::hasColumn($user->getTable(), 'status')
+            && $status !== null
+            && $status !== ''
+            && $status != 'active') {
             \Auth::logout();
 
             return redirect('/login')
@@ -118,7 +152,9 @@ class LoginController extends Controller
                   'status',
                   ['success' => 0, 'msg' => __('lang_v1.user_inactive')]
               );
-        } elseif (! $user->allow_login) {
+        } elseif (Schema::hasColumn($user->getTable(), 'allow_login')
+            && $user->getAttribute('allow_login') !== null
+            && ! $user->allow_login) {
             \Auth::logout();
 
             return redirect('/login')
