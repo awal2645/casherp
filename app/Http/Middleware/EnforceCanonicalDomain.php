@@ -11,9 +11,9 @@ class EnforceCanonicalDomain
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $canonicalUrl = rtrim((string) config('canonical.url'), '/');
+        $canonicalUrl = self::usablePublicUrl((string) config('canonical.url'));
 
-        if ($canonicalUrl === '') {
+        if ($canonicalUrl === null) {
             return $next($request);
         }
 
@@ -47,5 +47,36 @@ class EnforceCanonicalDomain
             'Cache-Control' => 'no-store',
             'Vary' => 'Host',
         ]);
+    }
+
+    /**
+     * A loopback or private CANONICAL_URL is a local-dev value, not a public
+     * origin. Treating it as canonical rejects www.casherp.com with HTTP 421.
+     */
+    public static function usablePublicUrl(?string $canonicalUrl): ?string
+    {
+        $canonicalUrl = rtrim((string) $canonicalUrl, '/');
+        if ($canonicalUrl === '' || ! filter_var($canonicalUrl, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+
+        $host = strtolower((string) parse_url($canonicalUrl, PHP_URL_HOST));
+        if ($host === '' || $host === 'localhost' || str_ends_with($host, '.localhost') || $host === '::1') {
+            return null;
+        }
+
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            $isPublic = filter_var(
+                $host,
+                FILTER_VALIDATE_IP,
+                FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+            );
+
+            if ($isPublic === false) {
+                return null;
+            }
+        }
+
+        return $canonicalUrl;
     }
 }

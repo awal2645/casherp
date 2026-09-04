@@ -41,11 +41,13 @@ class AppServiceProvider extends ServiceProvider
         // Generate every route, asset, notification and payment callback from
         // the one configured public application origin. This also applies to
         // queues and console commands where there is no browser Host header.
-        $canonicalUrl = rtrim((string) config('canonical.url'), '/');
-        $applicationUrl = $canonicalUrl !== '' ? $canonicalUrl : (string) config('app.url');
+        $canonicalUrl = \App\Http\Middleware\EnforceCanonicalDomain::usablePublicUrl(
+            (string) config('canonical.url')
+        );
+        $applicationUrl = $canonicalUrl !== null ? $canonicalUrl : (string) config('app.url');
         $url = parse_url($applicationUrl);
 
-        if ($canonicalUrl !== '' && filter_var($canonicalUrl, FILTER_VALIDATE_URL)) {
+        if ($canonicalUrl !== null) {
             \URL::forceRootUrl($canonicalUrl);
         }
 

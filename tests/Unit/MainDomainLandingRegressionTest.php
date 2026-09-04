@@ -126,6 +126,28 @@ class MainDomainLandingRegressionTest extends TestCase
         }
     }
 
+    public function test_loopback_canonical_url_does_not_reject_the_public_www_host(): void
+    {
+        $app = new Container();
+        Container::setInstance($app);
+        $app->instance('config', new Repository([
+            'canonical' => [
+                'url' => 'http://127.0.0.1:8000',
+                'legacy_hosts' => ['casherp.com'],
+            ],
+        ]));
+        $middleware = new EnforceCanonicalDomain();
+        $next = static fn () => new Response('CashERP application', 200);
+
+        try {
+            $www = $middleware->handle(Request::create('https://www.casherp.com/'), $next);
+            $this->assertSame(200, $www->getStatusCode());
+            $this->assertSame('CashERP application', $www->getContent());
+        } finally {
+            Container::setInstance(null);
+        }
+    }
+
     private function projectPath(string $path): string
     {
         return dirname(__DIR__, 2).'/'.ltrim($path, '/');
