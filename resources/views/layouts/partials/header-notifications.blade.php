@@ -4,18 +4,22 @@
         \App\Notifications\BusinessClosureNotification::class,
         \Modules\Superadmin\Notifications\SuperadminCommunicator::class,
     ];
-    $notification_query = auth()->user()->notifications()->where(function ($query) use ($notification_business_id, $platform_notification_types) {
-        if ($notification_business_id > 0) {
-            $query->where('data->business_id', $notification_business_id)
-                ->orWhere(function ($platform) use ($platform_notification_types) {
-                    $platform->whereNull('data->business_id')->whereIn('type', $platform_notification_types);
-                });
-        } else {
-            $query->whereNull('data->business_id')->whereIn('type', $platform_notification_types);
-        }
-    });
-    $total_notifications = (clone $notification_query)->count();
-    $total_unread = (clone $notification_query)->whereNull('read_at')->count();
+    $total_notifications = 0;
+    $total_unread = 0;
+    if (auth()->check() && \Illuminate\Support\Facades\Schema::hasTable('notifications')) {
+        $notification_query = auth()->user()->notifications()->where(function ($query) use ($notification_business_id, $platform_notification_types) {
+            if ($notification_business_id > 0) {
+                $query->where('data->business_id', $notification_business_id)
+                    ->orWhere(function ($platform) use ($platform_notification_types) {
+                        $platform->whereNull('data->business_id')->whereIn('type', $platform_notification_types);
+                    });
+            } else {
+                $query->whereNull('data->business_id')->whereIn('type', $platform_notification_types);
+            }
+        });
+        $total_notifications = (clone $notification_query)->count();
+        $total_unread = (clone $notification_query)->whereNull('read_at')->count();
+    }
     $is_rtl = in_array(session()->get('user.language', config('app.locale')), config('constants.langs_rtl'));
 @endphp
 <!-- Notifications: style can be found in dropdown.less -->
