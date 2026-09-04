@@ -2,7 +2,7 @@
 @php
     $is_rtl = in_array(session()->get('user.language', config('app.locale')), config('constants.langs_rtl'));
     $__accessible_businesses = Auth::user()->accessibleBusinesses()
-        ->where('business.is_active', true)
+        ->active()
         ->with('industry')
         ->orderBy('business.name')
         ->get();

@@ -21,7 +21,7 @@ class BusinessSwitcherController extends Controller
         ]);
 
         $business = $request->user()->accessibleBusinesses()
-            ->where('business.is_active', true)
+            ->active()
             ->where('business.id', $data['business_id'])
             ->with(['currency', 'industry'])
             ->firstOrFail();

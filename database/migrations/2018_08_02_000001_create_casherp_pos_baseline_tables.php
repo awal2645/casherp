@@ -17,6 +17,19 @@ return new class extends Migration
     {
         $this->ensureUsersTable();
 
+        $this->createIfMissing('activity_log', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('log_name')->nullable();
+            $table->text('description')->nullable();
+            $table->nullableMorphs('subject', 'subject');
+            $table->nullableMorphs('causer', 'causer');
+            $table->json('properties')->nullable();
+            $table->uuid('batch_uuid')->nullable();
+            $table->unsignedInteger('business_id')->nullable();
+            $table->timestamps();
+            $table->index('log_name');
+        });
+
         $this->createIfMissing('currencies', function (Blueprint $table) {
             $table->increments('id');
             $table->string('country');
@@ -84,8 +97,12 @@ return new class extends Migration
             $table->text('email_settings')->nullable();
             $table->text('sms_settings')->nullable();
             $table->text('weighing_scale_setting')->nullable();
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
+
+        $this->ensureBooleanColumn('business', 'is_active', 1);
+        $this->ensureBooleanColumn('business_locations', 'is_active', 1);
 
         $this->createIfMissing('business_locations', function (Blueprint $table) {
             $table->increments('id');
@@ -509,6 +526,17 @@ return new class extends Migration
         }
     }
 
+    private function ensureBooleanColumn(string $table, string $column, int $default = 1): void
+    {
+        if (! Schema::hasTable($table) || Schema::hasColumn($table, $column)) {
+            return;
+        }
+
+        Schema::table($table, function (Blueprint $table) use ($column, $default) {
+            $table->boolean($column)->default($default);
+        });
+    }
+
     private function ensureUsersTable(): void
     {
         if (! Schema::hasTable('users')) {
@@ -557,6 +585,7 @@ return new class extends Migration
             $table->decimal('cmmsn_percent', 22, 4)->default(0);
             $table->string('user_type')->default('user');
             $table->boolean('allow_login')->default(1);
+            $table->string('status')->default('active');
             $table->softDeletes();
         });
     }
@@ -579,6 +608,7 @@ return new class extends Migration
         $table->decimal('cmmsn_percent', 22, 4)->default(0);
         $table->string('user_type')->default('user');
         $table->boolean('allow_login')->default(1);
+        $table->string('status')->default('active');
         $table->softDeletes();
         $table->timestamps();
     }

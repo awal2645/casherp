@@ -18,6 +18,7 @@ use DB;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Str;
 
@@ -1512,15 +1513,23 @@ class Util
 
         $business = session()->has('business') ? session('business') : Business::find($business_id);
 
-        date_default_timezone_set($business->time_zone);
+        if (empty($business) || ! Schema::hasTable('activity_log')) {
+            return;
+        }
 
-        $activity = activity()
-            ->performedOn($on)
-            ->withProperties($properties)
-            ->log($action);
+        try {
+            date_default_timezone_set($business->time_zone);
 
-        $activity->business_id = $business_id;
-        $activity->save();
+            $activity = activity()
+                ->performedOn($on)
+                ->withProperties($properties)
+                ->log($action);
+
+            $activity->business_id = $business_id;
+            $activity->save();
+        } catch (\Throwable $e) {
+            // Login and other core flows should not fail if activity logging is unavailable.
+        }
     }
 
     public function getBackupCleanCronJobCommand()

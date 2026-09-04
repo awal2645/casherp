@@ -110,7 +110,11 @@ class LoginController extends Controller
 
         $this->businessUtil->activityLog($user, 'login', null, [], false, $business->id);
 
-        if ($user->status != 'active') {
+        $status = $user->getAttribute('status');
+        if (\Illuminate\Support\Facades\Schema::hasColumn($user->getTable(), 'status')
+            && $status !== null
+            && $status !== ''
+            && $status != 'active') {
             \Auth::logout();
 
             return redirect('/login')
@@ -118,7 +122,7 @@ class LoginController extends Controller
                   'status',
                   ['success' => 0, 'msg' => __('lang_v1.user_inactive')]
               );
-        } elseif (! $user->allow_login) {
+        } elseif (isset($user->allow_login) && ! $user->allow_login) {
             \Auth::logout();
 
             return redirect('/login')

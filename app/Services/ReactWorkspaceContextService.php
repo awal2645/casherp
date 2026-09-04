@@ -12,7 +12,7 @@ class ReactWorkspaceContextService
     {
         $business = Business::with('industry:id,name,code')->findOrFail($businessId);
         $businesses = $request->user()->accessibleBusinesses()
-            ->where('business.is_active', true)
+            ->active()
             ->with('industry:id,name,code')
             ->orderBy('business.name')
             ->get(['business.id', 'business.name', 'business.industry_id']);
