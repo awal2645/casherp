@@ -1,0 +1,20 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Never serve secrets or VCS files from the application root.
+    RewriteRule ^(.*)\.(env|env\.example|env\.backup|git|gitignore)$ - [F,L,NC]
+    RewriteRule ^(composer\.(json|lock)|artisan|phpunit\.xml)$ - [F,L,NC]
+
+    # Route every request through Laravel's public directory.
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<FilesMatch "^\.env">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>

@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Production www-only redirects. Localhost and LAN hosts skip these rules.
+    RewriteCond %{HTTP_HOST} ^casherp\.com$ [NC]
+    RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$ [NC]
+    RewriteRule ^ https://www.casherp.com%{REQUEST_URI} [R=308,L,NE]
+
+    RewriteCond %{HTTP_HOST} ^casherp\.com$ [NC]
+    RewriteRule ^ https://www.casherp.com%{REQUEST_URI} [R=301,L,NE]
+
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP_HOST} ^www\.casherp\.com$ [NC]
+    RewriteRule ^ https://www.casherp.com%{REQUEST_URI} [R=301,L,NE]
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>

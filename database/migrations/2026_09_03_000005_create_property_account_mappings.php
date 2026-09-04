@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up(){Schema::create('property_account_mappings',function(Blueprint $t){$t->id();$t->unsignedInteger('business_id')->unique();$t->unsignedInteger('rental_income_account_id')->nullable();$t->unsignedInteger('tenant_receivable_account_id')->nullable();$t->unsignedInteger('maintenance_expense_account_id')->nullable();$t->boolean('auto_post_enabled')->default(false);$t->timestamps();});}public function down(){Schema::dropIfExists('property_account_mappings');}};
