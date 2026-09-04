@@ -346,6 +346,35 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        $this->createIfMissing('hms_room_type_pricings', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('hms_room_type_id');
+            $table->string('season_type')->nullable();
+            $table->decimal('default_price_per_night', 22, 4)->default(0);
+            $table->unsignedInteger('adults')->nullable();
+            $table->unsignedInteger('childrens')->nullable();
+            $table->decimal('price_monday', 22, 4)->nullable();
+            $table->decimal('price_tuesday', 22, 4)->nullable();
+            $table->decimal('price_wednesday', 22, 4)->nullable();
+            $table->decimal('price_thursday', 22, 4)->nullable();
+            $table->decimal('price_friday', 22, 4)->nullable();
+            $table->decimal('price_saturday', 22, 4)->nullable();
+            $table->decimal('price_sunday', 22, 4)->nullable();
+            $table->timestamps();
+        });
+
+        $this->createIfMissing('hms_coupons', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('hms_room_type_id')->nullable();
+            $table->unsignedInteger('business_id');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->string('coupon_code');
+            $table->decimal('discount', 22, 4)->default(0);
+            $table->string('discount_type')->nullable();
+            $table->timestamps();
+        });
+
         $this->createIfMissing('hms_booking_lines', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('transaction_id');

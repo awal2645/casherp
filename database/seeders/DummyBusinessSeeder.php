@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Carbon\Carbon;
@@ -19,8 +20,17 @@ class DummyBusinessSeeder extends Seeder
      */
     public function run()
     {
+        if (Schema::hasTable('users') && DB::table('users')->where('username', 'admin')->exists()) {
+            if ($this->command) {
+                $this->command->info('Demo user admin already exists. Skipping DummyBusinessSeeder.');
+            }
+
+            return;
+        }
+
         DB::beginTransaction();
 
+        try {
         $password = Hash::make('123456');
 
         // $timezone = 'America/Phoenix'
@@ -61,7 +71,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '5', 'name' => 'Awesome Restaurant', 'currency_id' => '2', 'start_date' => '2018-07-12', 'tax_number_1' => '4578220005', 'tax_label_1' => 'IGST', 'tax_number_2' => '4593220009', 'tax_label_2' => 'SGST', 'default_sales_tax' => null, 'default_profit_percent' => '25.00', 'owner_id' => '7', 'time_zone' => 'America/Chicago', 'fy_start_month' => '1', 'accounting_method' => 'fifo', 'default_sales_discount' => null, 'sell_price_tax' => 'includes', 'logo' => null, 'sku_prefix' => 'AR', 'enable_product_expiry' => '0', 'expiry_type' => 'add_expiry', 'on_product_expiry' => 'keep_selling', 'stop_selling_before' => '0', 'enable_tooltip' => '1', 'purchase_in_diff_currency' => '0', 'purchase_currency_id' => null, 'p_exchange_rate' => '1.000', 'transaction_edit_days' => '30', 'stock_expiry_alert_days' => '30', 'keyboard_shortcuts' => $shortcuts, 'pos_settings' => '{"disable_pay_checkout":0,"disable_draft":0,"disable_express_checkout":0,"hide_product_suggestion":0,"hide_recent_trans":0,"disable_discount":0,"disable_order_tax":0, "customer_display_screen":1, "display_screen_heading":"<h2 style=\"text-align: center;\">Welcome<\/h2>", "carousel_image_1":"1744193481_20662.jpg","carousel_image_2":"1744193481_9195778.jpg","carousel_image_4":"1744193481_14928.jpg","carousel_image_5":"1744193481_14931.jpg"}', 'enable_brand' => '1', 'enable_category' => '1', 'enable_sub_category' => '1', 'enable_price_tax' => '1', 'enable_purchase_status' => '1', 'enable_lot_number' => '0', 'default_unit' => null, 'enable_racks' => '0', 'enable_row' => '0', 'enable_position' => '0', 'enable_editing_product_from_purchase' => '1', 'sales_cmsn_agnt' => null, 'item_addition_method' => '1', 'enable_inline_tax' => '0', 'currency_symbol_placement' => 'before', 'enabled_modules' => '["purchases","add_sale","pos_sale","stock_transfers","stock_adjustment","expenses","tables","modifiers","service_staff","kitchen","types_of_service","booking"]', 'date_format' => 'm/d/Y', 'time_format' => '24', 'repair_settings' => null, 'ref_no_prefixes' => $prefixes, 'created_at' => '2018-07-13 16:42:11', 'updated_at' => '2018-07-13 07:38:24', 'common_settings' => null, 'productcatalogue_settings' => $productcatalogue_settings],
             ['id' => '6', 'name' => 'Manufacturers Demo', 'currency_id' => '124', 'start_date' => '2019-08-18', 'tax_number_1' => null, 'tax_label_1' => null, 'tax_number_2' => null, 'tax_label_2' => null, 'default_sales_tax' => null, 'default_profit_percent' => '25.00', 'owner_id' => '12', 'time_zone' => 'Asia/Kolkata', 'fy_start_month' => '1', 'accounting_method' => 'fifo', 'default_sales_discount' => null, 'sell_price_tax' => 'includes', 'logo' => null, 'sku_prefix' => null, 'enable_product_expiry' => '0', 'expiry_type' => 'add_expiry', 'on_product_expiry' => 'keep_selling', 'stop_selling_before' => '0', 'enable_tooltip' => '1', 'purchase_in_diff_currency' => '0', 'purchase_currency_id' => null, 'p_exchange_rate' => '1.000', 'transaction_edit_days' => '30', 'stock_expiry_alert_days' => '30', 'keyboard_shortcuts' => $shortcuts, 'pos_settings' => '{"disable_pay_checkout":0,"disable_draft":0,"disable_express_checkout":0,"hide_product_suggestion":0,"hide_recent_trans":0,"disable_discount":0,"disable_order_tax":0,"is_pos_subtotal_editable":0}', 'enable_brand' => '1', 'enable_category' => '1', 'enable_sub_category' => '1', 'enable_price_tax' => '1', 'enable_purchase_status' => '1', 'enable_lot_number' => '0', 'default_unit' => null, 'enable_racks' => '0', 'enable_row' => '0', 'enable_position' => '0', 'enable_editing_product_from_purchase' => '1', 'sales_cmsn_agnt' => null, 'item_addition_method' => '1', 'enable_inline_tax' => '0', 'currency_symbol_placement' => 'before', 'enabled_modules' => '["purchases","add_sale","pos_sale","stock_transfers","stock_adjustment","expenses"]', 'date_format' => 'm/d/Y', 'time_format' => '24', 'repair_settings' => null, 'ref_no_prefixes' => $prefixes, 'created_at' => '2019-08-18 18:41:28', 'updated_at' => '2019-08-18 18:43:22', 'common_settings' => null, 'productcatalogue_settings' => $productcatalogue_settings],
         ];
-        DB::table('business')->insert($business);
+        $this->insertIfTableExists('business', $business);
 
         $business_locations = [
             ['id' => '1', 'business_id' => '1', 'location_id' => null, 'name' => 'Awesome Shop', 'landmark' => 'Linking Street', 'country' => 'USA', 'state' => 'Arizona', 'city' => 'Phoenix', 'zip_code' => '85001', 'invoice_scheme_id' => '1', 'invoice_layout_id' => '1', 'sale_invoice_layout_id' => '1', 'selling_price_group_id' => null, 'print_receipt_on_invoice' => '1', 'receipt_printer_type' => 'browser', 'printer_id' => null, 'mobile' => null, 'alternate_number' => null, 'email' => null, 'website' => null, 'is_active' => '1', 'default_payment_accounts' => '{"cash":{"is_enabled":"1","account":null},"card":{"is_enabled":"1","account":null},"cheque":{"is_enabled":"1","account":null},"bank_transfer":{"is_enabled":"1","account":null},"other":{"is_enabled":"1","account":null},"custom_pay_1":{"is_enabled":"1","account":null},"custom_pay_2":{"is_enabled":"1","account":null},"custom_pay_3":{"is_enabled":"1","account":null}}', 'custom_field1' => null, 'custom_field2' => null, 'custom_field3' => null, 'custom_field4' => null, 'deleted_at' => null, 'created_at' => '2018-01-04 02:15:20', 'updated_at' => '2019-12-11 04:53:39'],
@@ -72,7 +82,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '6', 'business_id' => '6', 'location_id' => null, 'name' => 'Awesome Manufacturers', 'landmark' => 'Infront of XYZ', 'country' => 'USA', 'state' => 'S', 'city' => 'C', 'zip_code' => 'Z', 'invoice_scheme_id' => '6', 'invoice_layout_id' => '6', 'sale_invoice_layout_id' => '6', 'selling_price_group_id' => null, 'print_receipt_on_invoice' => '1', 'receipt_printer_type' => 'browser', 'printer_id' => null, 'mobile' => null, 'alternate_number' => null, 'email' => null, 'website' => null, 'is_active' => '1', 'default_payment_accounts' => '{"cash":{"is_enabled":"1"},"card":{"is_enabled":"1"},"cheque":{"is_enabled":"1"},"bank_transfer":{"is_enabled":"1"},"other":{"is_enabled":"1"},"custom_pay_1":{"is_enabled":"1"},"custom_pay_2":{"is_enabled":"1"},"custom_pay_3":{"is_enabled":"1"}}', 'custom_field1' => null, 'custom_field2' => null, 'custom_field3' => null, 'custom_field4' => null, 'deleted_at' => null, 'created_at' => '2019-08-18 13:11:28', 'updated_at' => '2019-12-11 17:36:49'],
         ];
 
-        DB::table('business_locations')->insert($business_locations);
+        $this->insertIfTableExists('business_locations', $business_locations);
 
         $hms_room_types = [
             [
@@ -116,7 +126,7 @@ class DummyBusinessSeeder extends Seeder
             ],
         ];
 
-        DB::table('hms_room_types')->insert($hms_room_types);
+        $this->insertIfTableExists('hms_room_types', $hms_room_types);
 
         $hms_rooms = [
             [
@@ -135,7 +145,7 @@ class DummyBusinessSeeder extends Seeder
             ],
         ];
 
-        DB::table('hms_rooms')->insert($hms_rooms);
+        $this->insertIfTableExists('hms_rooms', $hms_rooms);
 
         $hms_room_type_pricings = [
             [
@@ -191,7 +201,7 @@ class DummyBusinessSeeder extends Seeder
             ],
         ];
 
-        DB::table('hms_room_type_pricings')->insert($hms_room_type_pricings);
+        $this->insertIfTableExists('hms_room_type_pricings', $hms_room_type_pricings);
 
         $hms_extras = [
             [
@@ -229,7 +239,7 @@ class DummyBusinessSeeder extends Seeder
             ],
         ];
 
-        DB::table('hms_extras')->insert($hms_extras);
+        $this->insertIfTableExists('hms_extras', $hms_extras);
 
         $hms_coupons = [
             [
@@ -258,7 +268,7 @@ class DummyBusinessSeeder extends Seeder
             ],
         ];
 
-        DB::table('hms_coupons')->insert($hms_coupons);
+        $this->insertIfTableExists('hms_coupons', $hms_coupons);
 
         $hms_arrival = Carbon::now()->addDays(1)->format('Y-m-d H:i:s');
         $hms_departure = Carbon::now()->addDays(3)->format('Y-m-d H:i:s');
@@ -314,7 +324,7 @@ class DummyBusinessSeeder extends Seeder
             ],
         ];
 
-        DB::table('transactions')->insert($hms_booking_transactions);
+        $this->insertIfTableExists('transactions', $hms_booking_transactions);
 
         $hms_booking_lines = [
             [
@@ -331,7 +341,7 @@ class DummyBusinessSeeder extends Seeder
             ],
         ];
 
-        DB::table('hms_booking_lines')->insert($hms_booking_lines);
+        $this->insertIfTableExists('hms_booking_lines', $hms_booking_lines);
 
         $hms_booking_extras = [
             [
@@ -344,7 +354,7 @@ class DummyBusinessSeeder extends Seeder
             ],
         ];
 
-        DB::table('hms_booking_extras')->insert($hms_booking_extras);
+        $this->insertIfTableExists('hms_booking_extras', $hms_booking_extras);
 
         // `pos`.`cash_register_transactions`
         $cash_register_transactions = [
@@ -358,9 +368,9 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '8', 'cash_register_id' => '1', 'amount' => '71.25', 'pay_method' => 'cash', 'type' => 'credit', 'transaction_type' => 'sell', 'transaction_id' => '44', 'created_at' => '2018-07-13 07:46:36', 'updated_at' => '2018-07-13 07:46:36'],
             ['id' => '9', 'cash_register_id' => '1', 'amount' => '0.00', 'pay_method' => 'cash', 'type' => 'credit', 'transaction_type' => 'sell', 'transaction_id' => '44', 'created_at' => '2018-07-13 07:46:36', 'updated_at' => '2018-07-13 07:46:36'],
         ];
-        DB::table('cash_register_transactions')->insert($cash_register_transactions);
+        $this->insertIfTableExists('cash_register_transactions', $cash_register_transactions);
 
-        DB::insert("INSERT INTO users (id, surname, first_name, last_name, username, email, password, language, contact_no, address, remember_token, business_id, is_cmmsn_agnt, cmmsn_percent, deleted_at, created_at, updated_at) VALUES
+        $this->rawInsertIfTableExists("INSERT INTO users (id, surname, first_name, last_name, username, email, password, language, contact_no, address, remember_token, business_id, is_cmmsn_agnt, cmmsn_percent, deleted_at, created_at, updated_at) VALUES
                     (1, 'Mr', 'Admin', NULL, 'admin', 'admin@example.com', '$password', 'en', NULL, NULL, '6wUbpN3xEjDDyQwCfHiGqO7JkIQgjYoDFeQMxcp09YQXq1Ih1e5EqydddBMz', 1, 0, '0.00', NULL, '2018-01-04 02:15:19', '2018-01-04 02:15:19'),
 (2, 'Mr', 'Demo', 'Cashier', 'cashier', 'cashier@example.com', '$password', 'en', NULL, NULL, NULL, 1, 0, '0.00', NULL, '2018-01-04 02:20:58', '2018-01-04 02:20:58'),
 (3, 'Mr.', 'Demo', 'Admin', 'demo-admin', 'demoadmin@example.com', '$password', 'en', NULL, NULL, NULL, 1, 0, '0.00', NULL, '2018-01-06 07:10:57', '2018-01-06 07:10:57'),
@@ -381,7 +391,7 @@ class DummyBusinessSeeder extends Seeder
 (12, 'Mr.', 'mike', 'lee', 'manufacturer-demo', 'manufacturer-demo@demo.com', '$password', 'en', NULL, NULL, NULL, 6, 0, '0.00', NULL, '2019-08-18 13:11:28', '2019-08-18 13:11:28');
 ");
 
-        DB::insert("INSERT INTO brands (id, business_id, name, description, created_by, deleted_at, created_at, updated_at) VALUES
+        $this->rawInsertIfTableExists("INSERT INTO brands (id, business_id, name, description, created_by, deleted_at, created_at, updated_at) VALUES
                     (1, 1, 'Levis', NULL, 1, NULL, '2018-01-03 21:19:47', '2018-01-03 21:19:47'),
 (2, 1, 'Espirit', NULL, 1, NULL, '2018-01-03 21:19:58', '2018-01-03 21:19:58'),
 (3, 1, 'U.S. Polo Assn.', NULL, 1, NULL, '2018-01-03 21:20:26', '2018-01-03 21:20:26'),
@@ -459,7 +469,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '50', 'name' => 'Breakfast Included', 'business_id' => '1', 'short_code' => null, 'parent_id' => '0', 'created_by' => '1', 'category_type' => 'amenities', 'description' => 'Buffet breakfast included with stay', 'slug' => null, 'woocommerce_cat_id' => null, 'deleted_at' => null, 'created_at' => $today, 'updated_at' => $today],
             ['id' => '51', 'name' => 'Free Parking', 'business_id' => '1', 'short_code' => null, 'parent_id' => '0', 'created_by' => '1', 'category_type' => 'amenities', 'description' => 'On-site parking at no extra cost', 'slug' => null, 'woocommerce_cat_id' => null, 'deleted_at' => null, 'created_at' => $today, 'updated_at' => $today],
         ];
-        DB::table('categories')->insert($categories);
+        $this->insertIfTableExists('categories', $categories);
         $contacts = [
             ['id' => '1', 'business_id' => '1', 'type' => 'customer', 'supplier_business_name' => null, 'first_name' => 'Walk-In Customer', 'name' => 'Walk-In Customer', 'email' => null, 'contact_id' => 'CO0005', 'tax_number' => null, 'city' => 'Phoenix', 'state' => 'Arizona', 'country' => 'USA', 'address_line_1' => 'Linking Street', 'mobile' => '(378) 400-1234', 'landline' => null, 'alternate_number' => null, 'pay_term_number' => null, 'pay_term_type' => null, 'created_by' => '1', 'is_default' => '1', 'customer_group_id' => null, 'custom_field1' => null, 'custom_field2' => null, 'custom_field3' => null, 'custom_field4' => null, 'deleted_at' => null, 'created_at' => '2018-01-03 20:45:20', 'updated_at' => '2018-06-11 22:22:05'],
             ['id' => '2', 'business_id' => '1', 'type' => 'supplier', 'supplier_business_name' => 'Alpha Clothings', 'first_name' => 'Michael', 'name' => 'Michael', 'email' => null, 'contact_id' => 'CO0001', 'tax_number' => '4590091535', 'city' => 'Phoenix', 'state' => 'Arizona', 'country' => 'USA', 'address_line_1' => 'Linking Street', 'mobile' => '(378) 400-1234', 'landline' => null, 'alternate_number' => null, 'pay_term_number' => '15', 'pay_term_type' => 'days', 'created_by' => '1', 'is_default' => '0', 'customer_group_id' => null, 'custom_field1' => null, 'custom_field2' => null, 'custom_field3' => null, 'custom_field4' => null, 'deleted_at' => null, 'created_at' => '2018-01-03 20:59:38', 'updated_at' => '2018-06-11 22:21:03'],
@@ -478,7 +488,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '15', 'business_id' => '5', 'type' => 'supplier', 'supplier_business_name' => 'Perfect Bakers', 'first_name' => 'Thomas Willson', 'name' => 'Thomas Willson', 'email' => 'thomas@example.com', 'contact_id' => 'CO0002', 'tax_number' => '45781005', 'city' => null, 'state' => null, 'country' => null, 'address_line_1' => null, 'mobile' => '87850009358', 'landline' => null, 'alternate_number' => null, 'pay_term_number' => '10', 'pay_term_type' => 'months', 'created_by' => '7', 'is_default' => '0', 'customer_group_id' => null, 'custom_field1' => null, 'custom_field2' => null, 'custom_field3' => null, 'custom_field4' => null, 'deleted_at' => null, 'created_at' => '2018-07-13 07:33:50', 'updated_at' => '2018-07-13 07:33:50'],
             ['id' => '16', 'business_id' => '6', 'type' => 'customer', 'supplier_business_name' => null, 'first_name' => 'Walk-In Customer', 'name' => 'Walk-In Customer', 'email' => null, 'contact_id' => null, 'tax_number' => null, 'city' => null, 'state' => null, 'country' => null, 'address_line_1' => null, 'mobile' => '', 'landline' => null, 'alternate_number' => null, 'pay_term_number' => null, 'pay_term_type' => null, 'created_by' => '12', 'is_default' => '1', 'customer_group_id' => null, 'custom_field1' => null, 'custom_field2' => null, 'custom_field3' => null, 'custom_field4' => null, 'deleted_at' => null, 'created_at' => '2018-04-10 08:12:40', 'updated_at' => '2018-04-10 08:12:40'],
         ];
-        DB::table('contacts')->insert($contacts);
+        $this->insertIfTableExists('contacts', $contacts);
 
         $reference_counts = [
             ['id' => '1', 'ref_type' => 'purchase', 'ref_count' => '1', 'business_id' => '1', 'created_at' => '2018-06-11 22:17:07', 'updated_at' => '2018-06-11 22:17:07'],
@@ -491,7 +501,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '8', 'ref_type' => 'business_location', 'ref_count' => '1', 'business_id' => '6', 'created_at' => '2019-08-18 18:41:28', 'updated_at' => '2019-08-18 18:41:28'],
             ['id' => '9', 'ref_type' => 'production_purchase', 'ref_count' => '1', 'business_id' => '6', 'created_at' => '2019-08-18 19:09:19', 'updated_at' => '2019-08-18 19:09:19'],
         ];
-        DB::table('reference_counts')->insert($reference_counts);
+        $this->insertIfTableExists('reference_counts', $reference_counts);
 
         $res_tables = [
             ['id' => '1', 'business_id' => '5', 'location_id' => '5', 'name' => 'Table 1', 'description' => null, 'created_by' => '7', 'deleted_at' => null, 'created_at' => '2018-07-13 07:40:57', 'updated_at' => '2018-07-13 07:40:57'],
@@ -500,19 +510,19 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '4', 'business_id' => '5', 'location_id' => '5', 'name' => 'Table 4', 'description' => null, 'created_by' => '7', 'deleted_at' => null, 'created_at' => '2018-07-13 07:41:17', 'updated_at' => '2018-07-13 07:41:17'],
         ];
 
-        DB::table('res_tables')->insert($res_tables);
+        $this->insertIfTableExists('res_tables', $res_tables);
 
-        DB::insert("INSERT INTO tax_rates (id, business_id, name, amount, is_tax_group, created_by, deleted_at, created_at, updated_at) VALUES
+        $this->rawInsertIfTableExists("INSERT INTO tax_rates (id, business_id, name, amount, is_tax_group, created_by, deleted_at, created_at, updated_at) VALUES
                     (1, 1, 'VAT@10%', 10.00, 0, 1, NULL, '2018-01-04 02:40:07', '2018-01-04 02:40:07'),
 (2, 1, 'CGST@10%', 10.00, 0, 1, NULL, '2018-01-04 02:40:55', '2018-01-04 02:40:55'),
 (3, 1, 'SGST@8%', 8.00, 0, 1, NULL, '2018-01-04 02:41:13', '2018-01-04 02:41:13'),
 (4, 1, 'GST@18%', 18.00, 1, 1, NULL, '2018-01-04 02:42:19', '2018-01-04 02:42:19')");
 
-        DB::insert('INSERT INTO group_sub_taxes (group_tax_id, tax_id) VALUES
+        $this->rawInsertIfTableExists('INSERT INTO group_sub_taxes (group_tax_id, tax_id) VALUES
                     (4, 2),
                     (4, 3)');
 
-        DB::insert("INSERT INTO invoice_schemes (id, business_id, name, scheme_type, prefix, start_number, invoice_count, total_digits, is_default, created_at, updated_at) VALUES
+        $this->rawInsertIfTableExists("INSERT INTO invoice_schemes (id, business_id, name, scheme_type, prefix, start_number, invoice_count, total_digits, is_default, created_at, updated_at) VALUES
                     (1, 1, 'Default', 'blank', 'AS', 1, 5, 4, 1, '2018-01-04 02:15:20', '2018-01-04 02:45:16'),
 (2, 2, 'Default', 'blank', 'AP', 1, 3, 4, 1, '2018-04-10 08:12:40', '2018-04-10 10:26:12'),
 (3, 3, 'Default', 'blank', 'AE', 1, 5, 4, 1, '2018-04-10 10:46:16', '2018-04-10 11:54:16'),
@@ -528,9 +538,9 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '5', 'name' => 'Default', 'header_text' => null, 'invoice_no_prefix' => 'Invoice No.', 'quotation_no_prefix' => null, 'invoice_heading' => 'Invoice', 'sub_heading_line1' => null, 'sub_heading_line2' => null, 'sub_heading_line3' => null, 'sub_heading_line4' => null, 'sub_heading_line5' => null, 'invoice_heading_not_paid' => '', 'invoice_heading_paid' => '', 'quotation_heading' => null, 'sub_total_label' => 'Subtotal', 'discount_label' => 'Discount', 'tax_label' => 'Tax', 'total_label' => 'Total', 'total_due_label' => 'Total Due', 'paid_label' => 'Total Paid', 'show_client_id' => '0', 'client_id_label' => null, 'client_tax_label' => null, 'date_label' => 'Date', 'show_time' => '1', 'show_brand' => '0', 'show_sku' => '1', 'show_cat_code' => '1', 'show_sale_description' => '0', 'table_product_label' => 'Product', 'table_qty_label' => 'Quantity', 'table_unit_price_label' => 'Unit Price', 'table_subtotal_label' => 'Subtotal', 'cat_code_label' => null, 'logo' => null, 'show_logo' => '0', 'show_business_name' => '0', 'show_location_name' => '1', 'show_landmark' => '1', 'show_city' => '1', 'show_state' => '1', 'show_zip_code' => '1', 'show_country' => '1', 'show_mobile_number' => '1', 'show_alternate_number' => '0', 'show_email' => '0', 'show_tax_1' => '1', 'show_tax_2' => '0', 'show_barcode' => '0', 'show_payments' => '1', 'show_customer' => '1', 'customer_label' => 'Customer', 'highlight_color' => '#000000', 'footer_text' => '', 'module_info' => null, 'is_default' => '1', 'business_id' => '5', 'design' => 'classic', 'cn_heading' => null, 'cn_no_label' => null, 'cn_amount_label' => null, 'created_at' => '2018-07-13 16:42:11', 'updated_at' => '2018-07-13 16:42:11'],
             ['id' => '6', 'name' => 'Default', 'header_text' => null, 'invoice_no_prefix' => 'Invoice No.', 'quotation_no_prefix' => null, 'invoice_heading' => 'Invoice', 'sub_heading_line1' => null, 'sub_heading_line2' => null, 'sub_heading_line3' => null, 'sub_heading_line4' => null, 'sub_heading_line5' => null, 'invoice_heading_not_paid' => '', 'invoice_heading_paid' => '', 'quotation_heading' => null, 'sub_total_label' => 'Subtotal', 'discount_label' => 'Discount', 'tax_label' => 'Tax', 'total_label' => 'Total', 'total_due_label' => 'Total Due', 'paid_label' => 'Total Paid', 'show_client_id' => '0', 'client_id_label' => null, 'client_tax_label' => null, 'date_label' => 'Date', 'show_time' => '1', 'show_brand' => '0', 'show_sku' => '1', 'show_cat_code' => '1', 'show_sale_description' => '0', 'table_product_label' => 'Product', 'table_qty_label' => 'Quantity', 'table_unit_price_label' => 'Unit Price', 'table_subtotal_label' => 'Subtotal', 'cat_code_label' => null, 'logo' => null, 'show_logo' => '0', 'show_business_name' => '0', 'show_location_name' => '1', 'show_landmark' => '1', 'show_city' => '1', 'show_state' => '1', 'show_zip_code' => '1', 'show_country' => '1', 'show_mobile_number' => '1', 'show_alternate_number' => '0', 'show_email' => '0', 'show_tax_1' => '1', 'show_tax_2' => '0', 'show_barcode' => '0', 'show_payments' => '1', 'show_customer' => '1', 'customer_label' => 'Customer', 'highlight_color' => '#000000', 'footer_text' => '', 'module_info' => null, 'is_default' => '1', 'business_id' => '6', 'design' => 'classic', 'cn_heading' => null, 'cn_no_label' => null, 'cn_amount_label' => null, 'created_at' => '2019-08-18 18:41:28', 'updated_at' => '2019-08-18 18:41:28'],
         ];
-        DB::table('invoice_layouts')->insert($invoice_layouts);
+        $this->insertIfTableExists('invoice_layouts', $invoice_layouts);
 
-        DB::insert("INSERT INTO units (id, business_id, actual_name, short_name, allow_decimal, base_unit_id, base_unit_multiplier, created_by, deleted_at, created_at, updated_at) VALUES
+        $this->rawInsertIfTableExists("INSERT INTO units (id, business_id, actual_name, short_name, allow_decimal, base_unit_id, base_unit_multiplier, created_by, deleted_at, created_at, updated_at) VALUES
                     (1, 1, 'Pieces', 'Pc(s)', 0, NULL, NULL, 1, NULL, '2018-01-03 15:15:20', '2018-01-03 15:15:20'),
 (2, 1, 'Packets', 'packets', 0, NULL, NULL, 1, NULL, '2018-01-06 01:07:01', '2018-01-06 01:08:36'),
 (3, 1, 'Grams', 'g', 1, NULL, NULL, 1, NULL, '2018-01-06 01:10:34', '2018-01-06 01:10:34'),
@@ -694,7 +704,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '154', 'name' => 'Mother board Service', 'business_id' => '4', 'type' => 'single', 'unit_id' => '6', 'sub_unit_ids' => null, 'brand_id' => '25', 'category_id' => null, 'sub_category_id' => null, 'tax' => null, 'tax_type' => 'exclusive', 'enable_stock' => '0', 'alert_quantity' => '0.0000', 'sku' => 'AS0154', 'barcode_type' => 'C128', 'expiry_period' => null, 'expiry_period_type' => null, 'enable_sr_no' => '0', 'weight' => null, 'product_custom_field1' => null, 'product_custom_field2' => null, 'product_custom_field3' => null, 'product_custom_field4' => null, 'image' => null, 'woocommerce_media_id' => null, 'product_description' => null, 'created_by' => '1', 'warranty_id' => null, 'is_inactive' => '0', 'repair_model_id' => '9', 'not_for_selling' => '0', 'woocommerce_product_id' => null, 'woocommerce_disable_sync' => '0', 'created_at' => '2020-05-11 13:52:47', 'updated_at' => '2020-05-11 13:52:47'],
         ];
 
-        DB::table('products')->insert($products);
+        $this->insertIfTableExists('products', $products);
 
         $product_variations = [
             ['id' => '1', 'variation_template_id' => null, 'name' => 'DUMMY', 'product_id' => '1', 'is_dummy' => '1', 'created_at' => '2018-01-03 21:29:08', 'updated_at' => '2018-01-03 21:29:08'],
@@ -850,7 +860,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '155', 'variation_template_id' => null, 'name' => 'DUMMY', 'product_id' => '153', 'is_dummy' => '1', 'created_at' => '2020-05-11 13:52:03', 'updated_at' => '2020-05-11 13:52:03'],
             ['id' => '156', 'variation_template_id' => null, 'name' => 'DUMMY', 'product_id' => '154', 'is_dummy' => '1', 'created_at' => '2020-05-11 13:52:47', 'updated_at' => '2020-05-11 13:52:47'],
         ];
-        DB::table('product_variations')->insert($product_variations);
+        $this->insertIfTableExists('product_variations', $product_variations);
 
         $variations = [
             ['id' => '1', 'name' => 'DUMMY', 'product_id' => '1', 'sub_sku' => 'AS0001', 'product_variation_id' => '1', 'woocommerce_variation_id' => null, 'variation_value_id' => null, 'default_purchase_price' => '130.0000', 'dpp_inc_tax' => '143.0000', 'profit_percent' => '0.0000', 'default_sell_price' => '130.0000', 'sell_price_inc_tax' => '143.0000', 'created_at' => '2018-01-03 21:29:08', 'updated_at' => '2018-06-11 07:40:59', 'deleted_at' => null, 'combo_variations' => null],
@@ -1044,7 +1054,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '202', 'name' => 'DUMMY', 'product_id' => '154', 'sub_sku' => 'AS0154', 'product_variation_id' => '156', 'woocommerce_variation_id' => null, 'variation_value_id' => null, 'default_purchase_price' => '800.0000', 'dpp_inc_tax' => '800.0000', 'profit_percent' => '25.0000', 'default_sell_price' => '1000.0000', 'sell_price_inc_tax' => '1000.0000', 'created_at' => '2020-05-11 13:52:47', 'updated_at' => '2020-05-11 13:52:47', 'deleted_at' => null, 'combo_variations' => '[]'],
         ];
 
-        DB::table('variations')->insert($variations);
+        $this->insertIfTableExists('variations', $variations);
 
         $res_product_modifier_sets = [
             ['modifier_set_id' => '78', 'product_id' => '72'],
@@ -1056,16 +1066,16 @@ class DummyBusinessSeeder extends Seeder
             ['modifier_set_id' => '79', 'product_id' => '68'],
         ];
 
-        DB::table('res_product_modifier_sets')->insert($res_product_modifier_sets);
+        $this->insertIfTableExists('res_product_modifier_sets', $res_product_modifier_sets);
 
-        DB::insert("INSERT INTO variation_templates (id, name, business_id, 
+        $this->rawInsertIfTableExists("INSERT INTO variation_templates (id, name, business_id, 
                     created_at, updated_at) VALUES
                     (1, 'Size (Tshirts)', 1, '2018-01-04 02:52:13', '2018-01-04 02:52:13'),
                     (2, 'Size (Shoes)', 1, '2018-01-04 02:53:21', '2018-01-04 02:53:21'),
                     (3, 'Waist Size (Jeans)', 1, '2018-01-04 02:54:34', '2018-01-04 02:54:34'),
                     (4, 'Color', 1, '2018-01-06 12:42:52', '2018-01-06 12:42:52')");
 
-        DB::insert("INSERT INTO variation_value_templates (id, name, variation_template_id, 
+        $this->rawInsertIfTableExists("INSERT INTO variation_value_templates (id, name, variation_template_id, 
                     created_at, updated_at) VALUES
                     (1, 'S', 1, '2018-01-04 02:52:13', '2018-01-04 02:52:13'),
                     (2, 'M', 1, '2018-01-04 02:52:13', '2018-01-04 02:52:13'),
@@ -1130,7 +1140,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '40', 'transaction_id' => '39', 'product_id' => '76', 'variation_id' => '119', 'quantity' => '200', 'pp_without_discount' => '8.00', 'discount_percent' => '0.00', 'purchase_price' => '8.00', 'purchase_price_inc_tax' => '8.00', 'item_tax' => '0.00', 'tax_id' => null, 'quantity_sold' => '0.00', 'quantity_adjusted' => '0.00', 'mfg_date' => null, 'exp_date' => null, 'lot_number' => null, 'created_at' => '2018-07-13 07:34:45', 'updated_at' => '2018-07-13 07:34:45'],
             ['id' => '41', 'transaction_id' => '40', 'product_id' => '76', 'variation_id' => '119', 'quantity' => '100', 'pp_without_discount' => '8.00', 'discount_percent' => '0.00', 'purchase_price' => '8.00', 'purchase_price_inc_tax' => '8.00', 'item_tax' => '0.00', 'tax_id' => null, 'quantity_sold' => '0.00', 'quantity_adjusted' => '0.00', 'mfg_date' => null, 'exp_date' => null, 'lot_number' => null, 'created_at' => '2018-07-13 07:38:24', 'updated_at' => '2018-07-13 07:38:24'],
         ];
-        DB::table('purchase_lines')->insert($purchase_lines);
+        $this->insertIfTableExists('purchase_lines', $purchase_lines);
 
         $mfg_purchase_lines = [
             ['id' => '42', 'transaction_id' => '45', 'product_id' => '88', 'variation_id' => '136', 'quantity' => '2000.0000', 'pp_without_discount' => '0.50', 'discount_percent' => '0.00', 'purchase_price' => '0.50', 'purchase_price_inc_tax' => '0.50', 'item_tax' => '0.00', 'tax_id' => null, 'quantity_sold' => '0.0000', 'quantity_adjusted' => '0.0000', 'quantity_returned' => '0.0000', 'mfg_quantity_used' => '100.0000', 'mfg_date' => null, 'exp_date' => null, 'lot_number' => null, 'created_at' => '2019-08-18 19:01:34', 'updated_at' => '2019-08-18 19:09:20'],
@@ -1142,9 +1152,9 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '48', 'transaction_id' => '51', 'product_id' => '83', 'variation_id' => '131', 'quantity' => '2000.0000', 'pp_without_discount' => '0.10', 'discount_percent' => '0.00', 'purchase_price' => '0.10', 'purchase_price_inc_tax' => '0.10', 'item_tax' => '0.00', 'tax_id' => null, 'quantity_sold' => '0.0000', 'quantity_adjusted' => '0.0000', 'quantity_returned' => '0.0000', 'mfg_quantity_used' => '502.5000', 'mfg_date' => null, 'exp_date' => null, 'lot_number' => null, 'created_at' => '2019-08-18 19:03:10', 'updated_at' => '2019-08-18 19:09:20'],
             ['id' => '49', 'transaction_id' => '52', 'product_id' => '81', 'variation_id' => '129', 'quantity' => '5.0000', 'pp_without_discount' => '2937.00', 'discount_percent' => '0.00', 'purchase_price' => '2937.00', 'purchase_price_inc_tax' => '2937.00', 'item_tax' => '0.00', 'tax_id' => null, 'quantity_sold' => '0.0000', 'quantity_adjusted' => '0.0000', 'quantity_returned' => '0.0000', 'mfg_quantity_used' => '0.0000', 'mfg_date' => '2019-08-18', 'exp_date' => null, 'lot_number' => null, 'created_at' => '2019-08-18 19:09:19', 'updated_at' => '2019-08-18 19:09:19'],
         ];
-        DB::table('purchase_lines')->insert($mfg_purchase_lines);
+        $this->insertIfTableExists('purchase_lines', $mfg_purchase_lines);
 
-        DB::insert("INSERT INTO transactions (id, business_id, location_id, type, status, payment_status, adjustment_type, contact_id, customer_group_id, invoice_no, ref_no, transaction_date, total_before_tax, tax_id, tax_amount, discount_type, discount_amount, shipping_details, shipping_charges, additional_notes, staff_note, final_total, expense_category_id, expense_for, commission_agent, document, is_direct_sale, exchange_rate, total_amount_recovered, transfer_parent_id, opening_stock_product_id, created_by, created_at, updated_at) VALUES
+        $this->rawInsertIfTableExists("INSERT INTO transactions (id, business_id, location_id, type, status, payment_status, adjustment_type, contact_id, customer_group_id, invoice_no, ref_no, transaction_date, total_before_tax, tax_id, tax_amount, discount_type, discount_amount, shipping_details, shipping_charges, additional_notes, staff_note, final_total, expense_category_id, expense_for, commission_agent, document, is_direct_sale, exchange_rate, total_amount_recovered, transfer_parent_id, opening_stock_product_id, created_by, created_at, updated_at) VALUES
 (1, 1, 1, 'purchase', 'received', 'paid', NULL, 2, NULL, NULL, '35001BCVX', '$last_15th_day', '50600.00', 1, '5060.00', NULL, '0', NULL, '0.00', NULL, NULL, '55660.00', NULL, NULL, NULL, NULL, 0, '1.000', NULL, NULL, NULL, 1, '2018-01-06 06:57:11', '2018-01-06 06:57:11'),
 (2, 1, 1, 'purchase', 'received', 'paid', NULL, 5, NULL, NULL, '35001BJGN', '$last_15th_day', '77000.00', 1, '7700.00', NULL, '0', NULL, '0.00', NULL, NULL, '84700.00', NULL, NULL, NULL, NULL, 0, '1.000', NULL, NULL, NULL, 1, '2018-01-06 06:58:10', '2018-01-06 06:58:10'),
 (3, 1, 1, 'purchase', 'received', 'partial', NULL, 6, NULL, NULL, '35001BCVJ', '$last_month', '5500.00', 1, '550.00', NULL, '0', NULL, '0.00', NULL, NULL, '6050.00', NULL, NULL, NULL, NULL, 0, '1.000', NULL, NULL, NULL, 1, '2018-01-06 07:02:22', '2018-01-06 07:02:22'),
@@ -1192,7 +1202,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '43', 'business_id' => '5', 'location_id' => '5', 'res_table_id' => '3', 'res_waiter_id' => '8', 'res_order_status' => null, 'type' => 'sell', 'status' => 'final', 'is_quotation' => '0', 'payment_status' => 'paid', 'adjustment_type' => null, 'contact_id' => '14', 'customer_group_id' => null, 'invoice_no' => '0003', 'ref_no' => '', 'transaction_date' => $today, 'total_before_tax' => '33.75', 'tax_id' => null, 'tax_amount' => '0.00', 'discount_type' => 'percentage', 'discount_amount' => '0', 'shipping_details' => null, 'shipping_charges' => '0.00', 'additional_notes' => null, 'staff_note' => null, 'final_total' => '33.75', 'expense_category_id' => null, 'expense_for' => null, 'commission_agent' => null, 'document' => null, 'is_direct_sale' => '0', 'exchange_rate' => '1.000', 'total_amount_recovered' => null, 'transfer_parent_id' => null, 'opening_stock_product_id' => null, 'created_by' => '7', 'created_at' => '2018-07-13 07:46:04', 'updated_at' => '2018-07-13 07:46:04'],
             ['id' => '44', 'business_id' => '5', 'location_id' => '5', 'res_table_id' => null, 'res_waiter_id' => null, 'res_order_status' => 'cooked', 'type' => 'sell', 'status' => 'final', 'is_quotation' => '0', 'payment_status' => 'paid', 'adjustment_type' => null, 'contact_id' => '14', 'customer_group_id' => null, 'invoice_no' => '0004', 'ref_no' => '', 'transaction_date' => $today, 'total_before_tax' => '71.25', 'tax_id' => null, 'tax_amount' => '0.00', 'discount_type' => 'percentage', 'discount_amount' => '0', 'shipping_details' => null, 'shipping_charges' => '0.00', 'additional_notes' => null, 'staff_note' => null, 'final_total' => '71.25', 'expense_category_id' => null, 'expense_for' => null, 'commission_agent' => null, 'document' => null, 'is_direct_sale' => '0', 'exchange_rate' => '1.000', 'total_amount_recovered' => null, 'transfer_parent_id' => null, 'opening_stock_product_id' => null, 'created_by' => '7', 'created_at' => '2018-07-13 07:46:36', 'updated_at' => '2018-07-13 07:46:55'],
         ];
-        DB::table('transactions')->insert($new_transactions);
+        $this->insertIfTableExists('transactions', $new_transactions);
         $mfg_transactions = [
             ['id' => '45', 'business_id' => '6', 'location_id' => '6', 'res_table_id' => null, 'res_waiter_id' => null, 'res_order_status' => null, 'type' => 'opening_stock', 'status' => 'received', 'is_quotation' => '0', 'payment_status' => 'paid', 'adjustment_type' => null, 'contact_id' => null, 'customer_group_id' => null, 'invoice_no' => null, 'ref_no' => null, 'subscription_no' => null, 'transaction_date' => '2019-01-01 19:01:33', 'total_before_tax' => '1000.00', 'tax_id' => null, 'tax_amount' => '0.00', 'discount_type' => null, 'discount_amount' => null, 'shipping_details' => null, 'shipping_charges' => '0.00', 'additional_notes' => null, 'staff_note' => null, 'final_total' => '1000.00', 'expense_category_id' => null, 'expense_for' => null, 'commission_agent' => null, 'document' => null, 'is_direct_sale' => '0', 'exchange_rate' => '1.000', 'total_amount_recovered' => null, 'transfer_parent_id' => null, 'opening_stock_product_id' => '88', 'created_by' => '12', 'mfg_parent_production_purchase_id' => null, 'mfg_wasted_units' => null, 'mfg_production_cost' => '0.0000', 'mfg_is_final' => '0', 'created_at' => '2019-08-18 19:01:33', 'updated_at' => '2019-08-18 19:01:33'],
             ['id' => '46', 'business_id' => '6', 'location_id' => '6', 'res_table_id' => null, 'res_waiter_id' => null, 'res_order_status' => null, 'type' => 'opening_stock', 'status' => 'received', 'is_quotation' => '0', 'payment_status' => 'paid', 'adjustment_type' => null, 'contact_id' => null, 'customer_group_id' => null, 'invoice_no' => null, 'ref_no' => null, 'subscription_no' => null, 'transaction_date' => '2019-01-01 19:01:49', 'total_before_tax' => '400.00', 'tax_id' => null, 'tax_amount' => '0.00', 'discount_type' => null, 'discount_amount' => null, 'shipping_details' => null, 'shipping_charges' => '0.00', 'additional_notes' => null, 'staff_note' => null, 'final_total' => '400.00', 'expense_category_id' => null, 'expense_for' => null, 'commission_agent' => null, 'document' => null, 'is_direct_sale' => '0', 'exchange_rate' => '1.000', 'total_amount_recovered' => null, 'transfer_parent_id' => null, 'opening_stock_product_id' => '87', 'created_by' => '12', 'mfg_parent_production_purchase_id' => null, 'mfg_wasted_units' => null, 'mfg_production_cost' => '0.0000', 'mfg_is_final' => '0', 'created_at' => '2019-08-18 19:01:49', 'updated_at' => '2019-08-18 19:01:49'],
@@ -1204,9 +1214,9 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '52', 'business_id' => '6', 'location_id' => '6', 'res_table_id' => null, 'res_waiter_id' => null, 'res_order_status' => null, 'type' => 'production_purchase', 'status' => 'received', 'is_quotation' => '0', 'payment_status' => 'due', 'adjustment_type' => null, 'contact_id' => null, 'customer_group_id' => null, 'invoice_no' => null, 'ref_no' => '2019/0001', 'subscription_no' => null, 'transaction_date' => '2019-08-18 19:08:00', 'total_before_tax' => '0.00', 'tax_id' => null, 'tax_amount' => '0.00', 'discount_type' => null, 'discount_amount' => null, 'shipping_details' => null, 'shipping_charges' => '0.00', 'additional_notes' => null, 'staff_note' => null, 'final_total' => '14685.00', 'expense_category_id' => null, 'expense_for' => null, 'commission_agent' => null, 'document' => null, 'is_direct_sale' => '0', 'exchange_rate' => '1.000', 'total_amount_recovered' => null, 'transfer_parent_id' => null, 'opening_stock_product_id' => null, 'created_by' => '12', 'mfg_parent_production_purchase_id' => null, 'mfg_wasted_units' => '0.0000', 'mfg_production_cost' => '10.0000', 'mfg_is_final' => '1', 'created_at' => '2019-08-18 19:09:19', 'updated_at' => '2019-08-18 19:09:19'],
             ['id' => '53', 'business_id' => '6', 'location_id' => '6', 'res_table_id' => null, 'res_waiter_id' => null, 'res_order_status' => null, 'type' => 'production_sell', 'status' => 'final', 'is_quotation' => '0', 'payment_status' => 'due', 'adjustment_type' => null, 'contact_id' => null, 'customer_group_id' => null, 'invoice_no' => null, 'ref_no' => null, 'subscription_no' => null, 'transaction_date' => '2019-08-18 19:08:00', 'total_before_tax' => '0.00', 'tax_id' => null, 'tax_amount' => '0.00', 'discount_type' => null, 'discount_amount' => null, 'shipping_details' => null, 'shipping_charges' => '0.00', 'additional_notes' => null, 'staff_note' => null, 'final_total' => '14685.00', 'expense_category_id' => null, 'expense_for' => null, 'commission_agent' => null, 'document' => null, 'is_direct_sale' => '0', 'exchange_rate' => '1.000', 'total_amount_recovered' => null, 'transfer_parent_id' => null, 'opening_stock_product_id' => null, 'created_by' => '12', 'mfg_parent_production_purchase_id' => '52', 'mfg_wasted_units' => null, 'mfg_production_cost' => '0.0000', 'mfg_is_final' => '0', 'created_at' => '2019-08-18 19:09:19', 'updated_at' => '2019-08-18 19:09:19'],
         ];
-        DB::table('transactions')->insert($mfg_transactions);
+        $this->insertIfTableExists('transactions', $mfg_transactions);
 
-        DB::insert("INSERT INTO transaction_payments (id, transaction_id, amount, method, card_transaction_number, card_number, card_type, card_holder_name, card_month, card_year, card_security, cheque_number, bank_account_number, paid_on, created_by, payment_for, parent_id, note, created_at, updated_at) VALUES
+        $this->rawInsertIfTableExists("INSERT INTO transaction_payments (id, transaction_id, amount, method, card_transaction_number, card_number, card_type, card_holder_name, card_month, card_year, card_security, cheque_number, bank_account_number, paid_on, created_by, payment_for, parent_id, note, created_at, updated_at) VALUES
                     (1, 6, '770.00', 'cash', NULL, NULL, 'visa', NULL, NULL, NULL, NULL, NULL, NULL, '2018-01-09 17:30:35', 1, NULL, NULL, NULL, '2018-01-06 01:36:11', '2018-01-06 01:36:11'),
 (2, 7, '825.00', 'cash', NULL, NULL, 'visa', NULL, NULL, NULL, NULL, NULL, NULL, '2018-01-09 17:30:35', 1, NULL, NULL, NULL, '2018-01-06 01:36:31', '2018-01-06 01:36:31'),
 (3, 8, '7700.00', 'cash', NULL, NULL, 'visa', NULL, NULL, NULL, NULL, NULL, NULL, '2018-01-09 17:30:35', 1, NULL, NULL, NULL, '2018-01-06 01:37:23', '2018-01-06 01:37:23'),
@@ -1276,7 +1286,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '30', 'transaction_id' => '44', 'product_id' => '69', 'variation_id' => '112', 'quantity' => '3', 'unit_price' => '15.00', 'unit_price_inc_tax' => '15.00', 'item_tax' => '0.00', 'tax_id' => null, 'sell_line_note' => '', 'parent_sell_line_id' => null, 'created_at' => '2018-07-13 07:46:36', 'updated_at' => '2018-07-13 07:46:36', 'unit_price_before_discount' => '15.00'],
         ];
 
-        DB::table('transaction_sell_lines')->insert($transaction_sell_lines);
+        $this->insertIfTableExists('transaction_sell_lines', $transaction_sell_lines);
 
         $mfg_sell_lines = [
             ['id' => '31', 'transaction_id' => '53', 'product_id' => '82', 'variation_id' => '130', 'quantity' => '5.0000', 'mfg_waste_percent' => '0.00', 'quantity_returned' => '0.0000', 'unit_price_before_discount' => '20.00', 'unit_price' => '20.00', 'line_discount_type' => null, 'line_discount_amount' => '0.00', 'unit_price_inc_tax' => '20.00', 'item_tax' => '0.00', 'tax_id' => null, 'discount_id' => null, 'lot_no_line_id' => null, 'sell_line_note' => '', 'res_service_staff_id' => null, 'res_line_order_status' => null, 'woocommerce_line_items_id' => null, 'parent_sell_line_id' => null, 'children_type' => '', 'sub_unit_id' => null, 'created_at' => '2019-08-18 19:09:19', 'updated_at' => '2019-08-18 19:09:19'],
@@ -1287,7 +1297,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '36', 'transaction_id' => '53', 'product_id' => '88', 'variation_id' => '136', 'quantity' => '100.0000', 'mfg_waste_percent' => '0.00', 'quantity_returned' => '0.0000', 'unit_price_before_discount' => '10.00', 'unit_price' => '10.00', 'line_discount_type' => null, 'line_discount_amount' => '0.00', 'unit_price_inc_tax' => '10.00', 'item_tax' => '0.00', 'tax_id' => null, 'discount_id' => null, 'lot_no_line_id' => null, 'sell_line_note' => '', 'res_service_staff_id' => null, 'res_line_order_status' => null, 'woocommerce_line_items_id' => null, 'parent_sell_line_id' => null, 'children_type' => '', 'sub_unit_id' => null, 'created_at' => '2019-08-18 19:09:19', 'updated_at' => '2019-08-18 19:09:19'],
         ];
 
-        DB::table('transaction_sell_lines')->insert($mfg_sell_lines);
+        $this->insertIfTableExists('transaction_sell_lines', $mfg_sell_lines);
 
         $variation_location_details = [
             ['id' => '1', 'product_id' => '2', 'product_variation_id' => '2', 'variation_id' => '2', 'location_id' => '1', 'qty_available' => '50.00', 'created_at' => '2018-01-06 06:57:11', 'updated_at' => '2018-01-06 07:07:23'],
@@ -1339,7 +1349,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '47', 'product_id' => '94', 'product_variation_id' => '96', 'variation_id' => '142', 'location_id' => '1', 'qty_available' => '8.0000', 'created_at' => '2020-05-07 21:18:22', 'updated_at' => '2020-05-07 21:18:22'],
             ['id' => '48', 'product_id' => '95', 'product_variation_id' => '97', 'variation_id' => '143', 'location_id' => '1', 'qty_available' => '7.0000', 'created_at' => '2020-05-07 21:19:10', 'updated_at' => '2020-05-09 10:28:58'],
         ];
-        DB::table('variation_location_details')->insert($variation_location_details);
+        $this->insertIfTableExists('variation_location_details', $variation_location_details);
 
         $system = [
             ['key' => 'default_business_active_status', 'value' => '1'],
@@ -1366,7 +1376,7 @@ class DummyBusinessSeeder extends Seeder
 
             ['id' => '4', 'name' => 'Business', 'description' => 'For Small & Growing Shops...', 'location_count' => '10', 'user_count' => '10', 'product_count' => '15000', 'bookings' => '0', 'kitchen' => '0', 'order_screen' => '0', 'tables' => '0', 'invoice_count' => '1000', 'interval' => 'months', 'interval_count' => '1', 'trial_days' => '10', 'price' => '259.9900', 'created_by' => '1', 'sort_order' => '5', 'is_active' => '0', 'deleted_at' => null, 'created_at' => $today, 'updated_at' => '2018-08-01 20:16:14', 'custom_permissions' => ''],
         ];
-        DB::table('packages')->insert($packages);
+        $this->insertIfTableExists('packages', $packages);
 
         $subscription_start = Carbon::today()->subDay(2)->toDateString();
         $subscription_trial = Carbon::today()->addDays(8)->toDateString();
@@ -1381,7 +1391,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '6', 'business_id' => '6', 'package_id' => '5', 'start_date' => $subscription_start, 'trial_end_date' => $subscription_trial, 'end_date' => $subscription_end, 'package_price' => '200.00', 'package_details' => '{"location_count":0,"user_count":0,"product_count":0,"invoice_count":0,"name":"Manufacturing Module package","manufacturing_module":"1"}', 'created_id' => '1', 'paid_via' => 'offline', 'payment_transaction_id' => '121333434', 'status' => 'approved', 'deleted_at' => null, 'created_at' => '2019-08-18 18:41:56', 'updated_at' => '2019-08-18 18:41:56'],
         ];
 
-        DB::table('subscriptions')->insert($subscriptions);
+        $this->insertIfTableExists('subscriptions', $subscriptions);
 
         if (class_exists(\App\NotificationTemplate::class) && \Illuminate\Support\Facades\Schema::hasTable('notification_templates')) {
             $notification_template_data = \App\NotificationTemplate::defaultNotificationTemplates();
@@ -1393,14 +1403,14 @@ class DummyBusinessSeeder extends Seeder
                 }
             }
 
-            DB::table('notification_templates')->insert($notification_template_array);
+            $this->insertIfTableExists('notification_templates', $notification_template_array);
         }
 
         $mfg_recipes = [
             ['id' => '1', 'product_id' => '81', 'variation_id' => '129', 'instructions' => '<p>Steps for making pizza can be written here ...</p>', 'waste_percent' => '0.00', 'ingredients_cost' => '2660.0000', 'extra_cost' => '10.0000', 'total_quantity' => '1.0000', 'final_price' => '2926.0000', 'sub_unit_id' => '9', 'created_at' => '2019-08-18 19:05:09', 'updated_at' => '2019-08-18 19:08:12'],
             ['id' => '2', 'product_id' => '93', 'variation_id' => '141', 'instructions' => null, 'waste_percent' => '0.00', 'ingredients_cost' => '31.5000', 'extra_cost' => '10.0000', 'total_quantity' => '1.0000', 'final_price' => '34.6500', 'sub_unit_id' => '9', 'created_at' => '2019-08-18 19:22:40', 'updated_at' => '2019-08-18 19:22:40'],
         ];
-        DB::table('mfg_recipes')->insert($mfg_recipes);
+        $this->insertIfTableExists('mfg_recipes', $mfg_recipes);
 
         $mfg_recipe_ingredients = [
             ['id' => '1', 'mfg_recipe_id' => '1', 'variation_id' => '130', 'quantity' => '1.0000', 'waste_percent' => '0.00', 'sub_unit_id' => null, 'created_at' => '2019-08-18 19:05:09', 'updated_at' => '2019-08-18 19:08:12'],
@@ -1415,7 +1425,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '10', 'mfg_recipe_id' => '2', 'variation_id' => '137', 'quantity' => '2.5000', 'waste_percent' => '0.50', 'sub_unit_id' => null, 'created_at' => '2019-08-18 19:22:41', 'updated_at' => '2019-08-18 19:22:41'],
         ];
 
-        DB::table('mfg_recipe_ingredients')->insert($mfg_recipe_ingredients);
+        $this->insertIfTableExists('mfg_recipe_ingredients', $mfg_recipe_ingredients);
 
         $product_locations = [
             ['product_id' => '1', 'location_id' => '1'],
@@ -1564,7 +1574,7 @@ class DummyBusinessSeeder extends Seeder
             ['product_id' => '153', 'location_id' => '4'],
         ];
 
-        DB::table('product_locations')->insert($product_locations);
+        $this->insertIfTableExists('product_locations', $product_locations);
 
         //Roles and permissions for business 1
         $admin_role1 = Role::create(['name' => 'Admin#1',
@@ -1693,7 +1703,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '3', 'leave_type' => 'Maternity leave', 'max_leave_count' => null, 'leave_count_interval' => null, 'business_id' => '1', 'created_at' => '2019-08-07 00:01:11', 'updated_at' => '2019-08-07 00:01:11'],
             ['id' => '4', 'leave_type' => 'Others', 'max_leave_count' => '1', 'leave_count_interval' => 'month', 'business_id' => '1', 'created_at' => '2019-08-07 00:01:34', 'updated_at' => '2019-08-07 00:01:34'],
         ];
-        DB::table('essentials_leave_types')->insert($essentials_leave_types);
+        $this->insertIfTableExists('essentials_leave_types', $essentials_leave_types);
 
         //Repair Module Dummy Data [product/device(categories) added above]
         $repair_device_models = [
@@ -1708,7 +1718,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '9', 'business_id' => '4', 'name' => 'Apple iPhone X', 'repair_checklist' => '"MIC|WiFi|Bluetooth|Sound|Camera|Ram"', 'brand_id' => '25', 'device_id' => '48', 'created_by' => '1', 'created_at' => '2020-05-07 21:15:38', 'updated_at' => '2020-05-11 12:38:48'],
         ];
 
-        DB::table('repair_device_models')->insert($repair_device_models);
+        $this->insertIfTableExists('repair_device_models', $repair_device_models);
 
         $repair_statuses = [
             ['id' => '1', 'name' => 'Repaired', 'color' => '#3bd914', 'sort_order' => '4', 'business_id' => '4', 'created_at' => '2020-05-07 21:02:40', 'updated_at' => '2020-05-07 21:02:40'],
@@ -1717,14 +1727,14 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '4', 'name' => 'Can\'t be repaired', 'color' => '#f5164b', 'sort_order' => '3', 'business_id' => '4', 'created_at' => '2020-05-07 21:04:10', 'updated_at' => '2020-05-08 10:04:58'],
         ];
 
-        DB::table('repair_statuses')->insert($repair_statuses);
+        $this->insertIfTableExists('repair_statuses', $repair_statuses);
 
         $essentials_shifts = [
             ['id' => '1', 'name' => 'Morning Shift', 'type' => 'fixed_shift', 'business_id' => '1', 'start_time' => '09:00:00', 'end_time' => '18:00:00', 'holidays' => '["sunday","saturday"]', 'created_at' => '2020-05-11 05:26:56', 'updated_at' => '2020-05-11 21:27:03'],
             ['id' => '2', 'name' => 'Evening Shift', 'type' => 'flexible_shift', 'business_id' => '1', 'start_time' => null, 'end_time' => null, 'holidays' => '["sunday","saturday"]', 'created_at' => '2020-05-11 05:28:17', 'updated_at' => '2020-05-11 05:28:17'],
         ];
 
-        DB::table('essentials_shifts')->insert($essentials_shifts);
+        $this->insertIfTableExists('essentials_shifts', $essentials_shifts);
 
         $essentials_user_shifts = [
             ['id' => '2', 'user_id' => '3', 'essentials_shift_id' => '1', 'start_date' => $start_of_week, 'end_date' => $end_of_week, 'created_at' => '2020-05-11 21:27:50', 'updated_at' => '2020-05-11 21:27:50'],
@@ -1734,7 +1744,7 @@ class DummyBusinessSeeder extends Seeder
             ['id' => '7', 'user_id' => '1', 'essentials_shift_id' => '2', 'start_date' => $start_of_week, 'end_date' => $end_of_week, 'created_at' => '2020-05-11 21:29:16', 'updated_at' => '2020-05-11 21:29:16'],
             ['id' => '8', 'user_id' => '2', 'essentials_shift_id' => '1', 'start_date' => $start_of_week, 'end_date' => $end_of_week, 'created_at' => '2020-05-11 21:29:45', 'updated_at' => '2020-05-11 21:29:45'],
         ];
-        DB::table('essentials_user_shifts')->insert($essentials_user_shifts);
+        $this->insertIfTableExists('essentials_user_shifts', $essentials_user_shifts);
 
 
         $gym_classes = [
@@ -1760,7 +1770,7 @@ class DummyBusinessSeeder extends Seeder
         ];
         
         // Insert into database
-        DB::table('gym_classes')->insert($gym_classes);
+        $this->insertIfTableExists('gym_classes', $gym_classes);
 
 $packages = [
     // Business 1
@@ -1793,12 +1803,14 @@ $packages = [
 ];
 
 // Insert into database
-    DB::table('gym_packages')->insert($packages);
+    $this->insertIfTableExists('gym_packages', $packages);
 
-    $locations = DB::table('business_locations')->get();
+    $locations = Schema::hasTable('business_locations')
+        ? DB::table('business_locations')->get()
+        : collect();
 
     foreach ($locations as $location) {
-        if (!$location->zatca_details) {
+        if (Schema::hasColumn('business_locations', 'zatca_details') && ! $location->zatca_details) {
             $zatca_details = [
                 'portal_mode' => 'developer-portal',
                 'otp' => '111222',
@@ -1836,5 +1848,42 @@ $packages = [
         }
 
         DB::commit();
+        } catch (\Throwable $e) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            throw $e;
+        }
+    }
+
+    private function insertIfTableExists(string $table, array $rows): void
+    {
+        if ($rows === [] || ! Schema::hasTable($table)) {
+            return;
+        }
+
+        $columns = array_flip(Schema::getColumnListing($table));
+        $filtered = [];
+        foreach ($rows as $row) {
+            $filtered[] = array_intersect_key($row, $columns);
+        }
+
+        DB::table($table)->insert($filtered);
+    }
+
+    private function rawInsertIfTableExists(string $sql): void
+    {
+        if (preg_match('/INSERT INTO\s+`?([a-z0-9_]+)`?/i', $sql, $matches) !== 1) {
+            DB::insert($sql);
+
+            return;
+        }
+
+        if (! Schema::hasTable($matches[1])) {
+            return;
+        }
+
+        DB::insert($sql);
     }
 }
