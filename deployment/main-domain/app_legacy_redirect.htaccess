@@ -1,0 +1,26 @@
+RewriteEngine On
+
+# This host never executes CashERP. Preserve old bookmarks temporarily while
+# making www.casherp.com the sole application origin.
+RewriteCond %{HTTP_HOST} ^app\.casherp\.com$ [NC]
+RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$ [NC]
+RewriteRule ^ https://www.casherp.com%{REQUEST_URI} [R=308,L,NE]
+
+RewriteCond %{HTTP_HOST} ^app\.casherp\.com$ [NC]
+RewriteRule ^ https://www.casherp.com%{REQUEST_URI} [R=301,L,NE]
+
+# Prevent direct access to sensitive application files.
+RewriteRule ^(.*)\.(env|git|gitignore|env.example|composer.*|artisan|package.*|phpunit.*)$ - [F,L,NC]
+
+# Forward non-legacy-host requests to the Laravel public directory.
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ /public/$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# php -- BEGIN cPanel-generated handler, do not edit
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php83 .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

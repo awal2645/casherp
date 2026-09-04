@@ -1,0 +1,567 @@
+/*
+ * CashERP V21 frontage polish layer
+ * Loaded after the developer's original landing stylesheet so the brand and
+ * page structure stay intact while spacing, accessibility and responsive
+ * behaviour remain consistent across public pages and registration.
+ */
+
+:root {
+    --ce-blue-50: #f2f7ff;
+    --ce-blue-100: #e3edff;
+    --ce-blue-600: #0b5cff;
+    --ce-blue-700: #0048d8;
+    --ce-navy-950: #07152f;
+    --ce-ink-800: #20334b;
+    --ce-ink-600: #5a6d82;
+    --ce-green-600: #11875d;
+    --ce-red-600: #c2393f;
+    --ce-border: #dce6f1;
+    --ce-surface: #ffffff;
+    --ce-surface-muted: #f6f8fc;
+    --ce-radius-sm: 10px;
+    --ce-radius-md: 16px;
+    --ce-radius-lg: 24px;
+    --ce-shadow-sm: 0 8px 24px rgba(7, 31, 67, .07);
+    --ce-shadow-md: 0 18px 48px rgba(7, 31, 67, .11);
+    --ce-focus: 0 0 0 4px rgba(11, 92, 255, .18);
+    --ce-section-space: clamp(64px, 7vw, 104px);
+}
+
+html {
+    color-scheme: light;
+    scroll-padding-top: 88px;
+}
+
+body {
+    color: var(--ce-ink-800);
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+}
+
+body::selection,
+body *::selection {
+    color: #fff;
+    background: var(--ce-blue-600);
+}
+
+[hidden] {
+    display: none !important;
+}
+
+main {
+    min-height: 58vh;
+    overflow: clip;
+}
+
+.container {
+    width: min(1400px, calc(100% - clamp(32px, 5vw, 72px)));
+}
+
+a,
+button,
+input,
+select,
+textarea,
+summary {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+    outline: 2px solid var(--ce-blue-600);
+    outline-offset: 3px;
+    box-shadow: var(--ce-focus);
+}
+
+.site-header {
+    border-bottom: 1px solid rgba(220, 230, 241, .78);
+    background: rgba(255, 255, 255, .92);
+}
+
+.nav-shell {
+    min-height: 68px;
+    height: auto;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--ce-radius-sm);
+}
+
+.brand img {
+    width: 138px;
+}
+
+.nav-link,
+.nav-login,
+.nav-search {
+    transition: color .18s ease, background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.nav-link {
+    border-radius: 9px;
+}
+
+.nav-link:hover,
+.nav-item.open > .nav-link {
+    color: var(--ce-blue-700);
+    background: var(--ce-blue-50);
+}
+
+.nav-search {
+    display: inline-grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    color: #40556d;
+    border: 1px solid var(--ce-border);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.nav-search:hover {
+    color: var(--ce-blue-600);
+    border-color: #b9cff7;
+    background: var(--ce-blue-50);
+}
+
+.dropdown,
+.mega-menu {
+    border-color: var(--ce-border);
+    box-shadow: var(--ce-shadow-md);
+}
+
+.button {
+    letter-spacing: -.005em;
+    box-shadow: none;
+    transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ce-shadow-sm);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.button-primary {
+    background: linear-gradient(135deg, var(--ce-blue-600), #0049db);
+    box-shadow: 0 10px 26px rgba(11, 92, 255, .24);
+}
+
+.button-primary:hover {
+    background: linear-gradient(135deg, #0754ec, #003fc2);
+}
+
+.button-outline {
+    border-color: #adc5ef;
+}
+
+.section {
+    padding-block: var(--ce-section-space);
+}
+
+.section-soft {
+    background: linear-gradient(180deg, #f7f9fc, #f3f7fc);
+}
+
+.section-title,
+.section-heading h2,
+.page-hero h1,
+.pricing-hero h1,
+.resource-hero h1,
+.get-started-head h1,
+.login-intro h1 {
+    color: var(--ce-navy-950);
+    letter-spacing: -.035em;
+    text-wrap: balance;
+}
+
+.hero-lead,
+.muted,
+.section-heading > p {
+    color: var(--ce-ink-600);
+}
+
+.section-heading,
+.section-heading-split,
+.pricing-head,
+.get-started-head {
+    margin-bottom: clamp(28px, 4vw, 48px);
+}
+
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    color: #6b7e93;
+    font-size: 13px;
+}
+
+.breadcrumb a {
+    color: var(--ce-blue-700);
+    font-weight: 700;
+}
+
+.info-card,
+.mini-feature,
+.browse-card,
+.price-card,
+.aside-card,
+.featured-card,
+.step-card,
+.setup-panel,
+.login-card,
+.contact-form-panel {
+    border-color: var(--ce-border);
+    box-shadow: var(--ce-shadow-sm);
+}
+
+.info-card,
+.mini-feature,
+.browse-card,
+.price-card,
+.featured-card,
+.step-card {
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.info-card:hover,
+.mini-feature:hover,
+.browse-card:hover,
+.price-card:hover,
+.featured-card:hover,
+.step-card:hover {
+    transform: translateY(-4px);
+    border-color: #bfd1ea;
+    box-shadow: var(--ce-shadow-md);
+}
+
+.setup-form label {
+    color: var(--ce-navy-950);
+    font-weight: 700;
+}
+
+.setup-form input,
+.setup-form select,
+.setup-form textarea,
+.search-field input,
+.sort-field select,
+.subscribe-form input {
+    min-height: 48px;
+    color: var(--ce-ink-800);
+    border: 1px solid #cfdbe8;
+    border-radius: 11px;
+    background: #fff;
+    transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.setup-form textarea {
+    min-height: 144px;
+    resize: vertical;
+}
+
+.setup-form input:hover,
+.setup-form select:hover,
+.setup-form textarea:hover,
+.search-field input:hover,
+.sort-field select:hover {
+    border-color: #aebfd1;
+}
+
+.setup-form input:focus,
+.setup-form select:focus,
+.setup-form textarea:focus,
+.search-field input:focus,
+.sort-field select:focus,
+.subscribe-form input:focus {
+    border-color: var(--ce-blue-600);
+    outline: 0;
+    box-shadow: var(--ce-focus);
+}
+
+.form-assurance,
+.resource-search-note {
+    color: #687b90;
+    font-size: 13px;
+}
+
+.resource-search-note {
+    margin: 8px 0 0;
+}
+
+.site-flash {
+    position: relative;
+    z-index: 90;
+    padding: 12px 0;
+    border-bottom: 1px solid transparent;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.site-flash.is-success {
+    color: #086446;
+    border-color: #bde7d5;
+    background: #eaf8f2;
+}
+
+.site-flash.is-error {
+    color: #932d33;
+    border-color: #f0c4c7;
+    background: #fff0f1;
+}
+
+.social-btn {
+    width: 100%;
+}
+
+.google-btn {
+    gap: 11px;
+    color: #273950;
+    border-color: #cfd9e5;
+    background: #fff;
+}
+
+.google-btn svg {
+    width: 21px;
+    height: 21px;
+    flex: 0 0 auto;
+}
+
+.social-connected {
+    display: grid;
+    gap: 2px;
+    margin: 18px 0;
+    padding: 14px 16px;
+    color: #0a6447;
+    border: 1px solid #b9e5d2;
+    border-radius: 12px;
+    background: #ecf9f3;
+}
+
+.social-connected strong {
+    color: #07543b;
+}
+
+.demo-data-label {
+    display: inline-flex;
+    margin-left: auto;
+    padding: 3px 7px;
+    color: #536980;
+    border: 1px solid #d9e3ee;
+    border-radius: 999px;
+    background: #f6f8fb;
+    font-size: 9px !important;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.or-sep span {
+    padding-inline: 12px;
+    color: #718398;
+    background: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.pricing-cards {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.price-card {
+    overflow: hidden;
+}
+
+.price-card.is-popular {
+    border-color: var(--ce-blue-600);
+}
+
+.price-amount strong {
+    overflow-wrap: anywhere;
+}
+
+.compare-table-wrap {
+    scrollbar-color: #9fb5cf #edf2f7;
+}
+
+.pricing-compare th,
+.pricing-compare td {
+    vertical-align: middle;
+}
+
+.pricing-compare tbody tr:hover td {
+    background: #f8faff;
+}
+
+.article-row {
+    cursor: default;
+}
+
+.resource-sidebar,
+.industry-sidebar,
+.resource-aside {
+    align-self: start;
+}
+
+.faq-list details {
+    border-color: var(--ce-border);
+    border-radius: 13px;
+    background: #fff;
+}
+
+.faq-list summary {
+    cursor: pointer;
+}
+
+.site-footer a {
+    border-radius: 5px;
+}
+
+.site-footer a:hover {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* Registration uses Bootstrap 3; keep its structure while harmonising controls. */
+body > .container .register-form,
+body > .container .business-register-form {
+    border-radius: var(--ce-radius-lg);
+}
+
+body > .container .form-control {
+    min-height: 42px;
+    border-color: #cad7e5;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+body > .container .form-control:focus {
+    border-color: var(--ce-blue-600);
+    box-shadow: var(--ce-focus);
+}
+
+body > .container fieldset {
+    margin-bottom: 26px;
+}
+
+body > .container legend {
+    padding-bottom: 10px;
+    border-color: var(--ce-border);
+    font-weight: 800;
+}
+
+@media (max-width: 1100px) {
+    .nav-shell {
+        min-height: 64px;
+    }
+
+    .primary-nav {
+        padding: 14px;
+        border: 1px solid var(--ce-border);
+        box-shadow: var(--ce-shadow-md);
+    }
+
+    .resource-sidebar,
+    .industry-sidebar,
+    .resource-aside {
+        position: static;
+    }
+}
+
+@media (max-width: 720px) {
+    :root {
+        --ce-section-space: 58px;
+    }
+
+    .container {
+        width: min(100% - 28px, 1400px);
+    }
+
+    .nav-actions .nav-search,
+    .nav-actions .nav-login {
+        display: none;
+    }
+
+    .section-heading-split,
+    .pricing-head,
+    .get-started-head {
+        align-items: flex-start;
+    }
+
+    .setup-steps {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 8px;
+    }
+
+    .setup-steps li {
+        min-width: max-content;
+    }
+
+    .pricing-compare th,
+    .pricing-compare td {
+        padding: 12px;
+        white-space: nowrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+@media print {
+    .site-header,
+    .site-footer,
+    .nav-actions,
+    .hero-actions,
+    .pricing-aside,
+    .resource-sidebar,
+    .resource-aside {
+        display: none !important;
+    }
+
+    body,
+    .section,
+    .section-soft {
+        color: #000;
+        background: #fff !important;
+    }
+
+    .container {
+        width: 100%;
+    }
+
+    .price-card,
+    .info-card,
+    .compare-table-wrap {
+        break-inside: avoid;
+        box-shadow: none;
+    }
+}

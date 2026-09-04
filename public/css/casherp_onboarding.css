@@ -1,0 +1,166 @@
+.casherp-onboarding-shell {
+    max-width: 1120px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.casherp-onboarding-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0 0 22px;
+}
+
+.casherp-onboarding-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #475569;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.casherp-onboarding-step strong {
+    display: block;
+    color: #0f172a;
+    font-size: 13px;
+}
+
+.casherp-onboarding-step span {
+    font-size: 11px;
+}
+
+.casherp-onboarding-step-number {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #334155;
+    font-weight: 700;
+}
+
+.casherp-onboarding-step.is-complete {
+    border-color: #86efac;
+    background: #f0fdf4;
+}
+
+.casherp-onboarding-step.is-complete .casherp-onboarding-step-number {
+    background: #16a34a;
+    color: #fff;
+}
+
+.casherp-onboarding-step.is-active {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .1);
+}
+
+.casherp-onboarding-step.is-active .casherp-onboarding-step-number {
+    background: #2563eb;
+    color: #fff;
+}
+
+[data-onboarding-form] fieldset {
+    margin: 0 0 22px;
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fff;
+}
+
+[data-onboarding-form] fieldset legend {
+    width: auto;
+    margin: 0 0 14px;
+    padding: 0 8px;
+    border: 0;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+[data-onboarding-form] .form-control,
+[data-onboarding-form] .select2-selection,
+[data-onboarding-form] .input-group-addon {
+    min-height: 42px;
+    border-color: #dbe2ea;
+}
+
+[data-onboarding-form] .form-control:focus,
+[data-onboarding-form] .select2-container--focus .select2-selection {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+[data-industry-profile] {
+    border: 1px solid #bfdbfe !important;
+    border-inline-start: 4px solid #2563eb !important;
+    border-radius: 12px;
+    background: #eff6ff !important;
+}
+
+[data-industry-questions] .form-group {
+    min-height: 100%;
+    background: #fff;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+[data-industry-questions] .form-group:hover {
+    transform: translateY(-1px);
+    border-color: #bfdbfe;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, .06);
+}
+
+[data-onboarding-submit-progress] {
+    height: 5px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e2e8f0;
+    margin-bottom: 16px;
+}
+
+[data-onboarding-submit-progress] span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #16a34a);
+    transition: width .25s ease;
+}
+
+.casherp-pricing-shell {
+    min-height: calc(100vh - 60px);
+    background: radial-gradient(circle at top, #1d4ed8 0, #0f2e5f 42%, #091a35 100%);
+}
+
+.casherp-pricing-shell .price_card > div {
+    border-top: 4px solid transparent;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.casherp-pricing-shell .price_card > div:hover {
+    border-top-color: #3b82f6;
+    transform: translateY(-3px);
+}
+
+@media (max-width: 767px) {
+    .casherp-onboarding-steps {
+        grid-template-columns: 1fr;
+    }
+
+    [data-onboarding-form] fieldset {
+        padding: 14px 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-onboarding-form] *,
+    .casherp-pricing-shell * {
+        transition: none !important;
+        animation: none !important;
+    }
+}

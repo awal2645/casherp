@@ -1,0 +1,134 @@
+.casherp-smtp-tab-heading {
+    align-items: flex-start;
+    background: linear-gradient(135deg, #f8fafc 0%, #eef5ff 100%);
+    border: 1px solid #dbe5f0;
+    border-radius: 12px;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 22px 24px;
+}
+
+.casherp-smtp-tab-heading h3 { color: #102a43; font-size: 22px; font-weight: 700; margin: 4px 0 6px; }
+.casherp-smtp-tab-heading p { color: #52667a; line-height: 1.55; margin: 0; max-width: 720px; }
+.casherp-smtp-eyebrow { color: var(--theme-700, #004eeb); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.casherp-smtp-security-badge { background: #e8f7ef; border: 1px solid #b8e2cb; border-radius: 999px; color: #17633a; flex: 0 0 auto; font-size: 12px; font-weight: 700; padding: 7px 11px; }
+.casherp-smtp-security-badge i { margin-inline-end: 5px; }
+
+.casherp-smtp-loading { align-items: center; color: #52667a; display: flex; gap: 9px; justify-content: center; min-height: 220px; }
+.casherp-smtp-layout { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) 280px; }
+.casherp-smtp-layout main { min-width: 0; }
+.casherp-smtp-card, .casherp-guide-card { background: #fff; border: 1px solid #dfe7ef; border-radius: 12px; box-shadow: 0 2px 8px rgba(16, 42, 67, .04); margin-bottom: 16px; padding: 22px; }
+.casherp-smtp-card-heading { align-items: flex-start; display: flex; gap: 12px; margin-bottom: 20px; }
+.casherp-smtp-card-heading h4, .casherp-guide-card h4 { color: #102a43; font-size: 16px; font-weight: 750; margin: 0 0 4px; }
+.casherp-smtp-card-heading p, .casherp-guide-card p { color: #62758a; line-height: 1.5; margin: 0; }
+.casherp-step { align-items: center; background: var(--theme-700, #004eeb); border-radius: 50%; color: #fff; display: inline-flex; flex: 0 0 28px; font-size: 13px; font-weight: 800; height: 28px; justify-content: center; }
+
+.casherp-delivery-options { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.casherp-choice { align-items: center; border: 1px solid #cdd9e5; border-radius: 10px; cursor: pointer; display: flex; gap: 12px; margin: 0; min-height: 78px; padding: 14px; position: relative; transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.casherp-choice:hover { border-color: #8eabc5; transform: translateY(-1px); }
+.casherp-choice.is-selected { background: #f5f9ff; border-color: var(--theme-700, #004eeb); box-shadow: 0 0 0 3px rgba(0, 78, 235, .08); }
+.casherp-choice input { height: 1px; opacity: 0; position: absolute; width: 1px; }
+.casherp-choice input:focus-visible + .casherp-choice-icon { outline: 3px solid rgba(0, 78, 235, .25); }
+.casherp-choice-icon { align-items: center; background: #edf3f8; border-radius: 9px; color: #486581; display: flex; flex: 0 0 38px; height: 38px; justify-content: center; }
+.casherp-choice.is-selected .casherp-choice-icon { background: var(--theme-700, #004eeb); color: #fff; }
+.casherp-choice strong, .casherp-choice small { display: block; }
+.casherp-choice strong { color: #243b53; font-size: 14px; }
+.casherp-choice small { color: #73869a; font-size: 12px; font-weight: 400; margin-top: 3px; }
+.casherp-choice-check { color: var(--theme-700, #004eeb); margin-inline-start: auto; opacity: 0; }
+.casherp-choice.is-selected .casherp-choice-check { opacity: 1; }
+
+.casherp-field-grid { display: grid; gap: 17px 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.casherp-form-field { min-width: 0; }
+.casherp-form-field.is-wide { grid-column: span 2; }
+.casherp-form-field label { color: #334e68; display: block; font-size: 12px; font-weight: 750; margin: 0 0 6px; }
+.casherp-form-field input, .casherp-form-field select { background: #fff; border: 1px solid #bcccdc; border-radius: 7px; color: #102a43; display: block; font-size: 14px; height: 40px; outline: none; padding: 8px 10px; transition: border-color .16s ease, box-shadow .16s ease; width: 100%; }
+.casherp-form-field input:focus, .casherp-form-field select:focus { border-color: var(--theme-700, #004eeb); box-shadow: 0 0 0 3px rgba(0, 78, 235, .1); }
+.casherp-form-field input::placeholder { color: #9aabba; }
+.casherp-form-field > small { color: #7b8da0; display: block; font-size: 11px; line-height: 1.4; margin-top: 5px; }
+.casherp-provider-help { display: inline-block; font-size: 11px; margin-top: 6px; }
+.casherp-field-error { color: #b42318; display: block; font-size: 11px; font-weight: 600; line-height: 1.35; margin-top: 5px; }
+.casherp-password-wrap, .casherp-input-suffix { display: flex; position: relative; }
+.casherp-password-wrap input { padding-inline-end: 42px; }
+.casherp-password-wrap button { background: transparent; border: 0; color: #627d98; height: 38px; inset-inline-end: 1px; position: absolute; top: 1px; width: 40px; }
+.casherp-input-suffix input { border-radius: 7px 0 0 7px; }
+.casherp-input-suffix span { align-items: center; background: #f2f5f8; border: 1px solid #bcccdc; border-left: 0; border-radius: 0 7px 7px 0; color: #62758a; display: flex; font-size: 11px; padding: 0 9px; }
+.casherp-inline-check { align-items: center; color: #52667a !important; display: flex !important; font-size: 11px !important; font-weight: 500 !important; gap: 6px; margin-top: 7px !important; }
+.casherp-inline-check input { height: 14px; margin: 0; width: 14px; }
+
+.casherp-smtp-history { align-items: center; background: #f7f9fb; border: 1px solid #e0e7ee; border-radius: 8px; display: flex; gap: 10px; margin-bottom: 16px; padding: 11px 12px; }
+.casherp-smtp-history.is-success { background: #f1fbf5; border-color: #c5e9d2; color: #17633a; }
+.casherp-smtp-history.is-failure { background: #fff7f6; border-color: #f4c7c3; color: #9b2c23; }
+.casherp-smtp-history.is-neutral { color: #52667a; }
+.casherp-smtp-history i { font-size: 18px; }
+.casherp-smtp-history strong, .casherp-smtp-history span { display: block; }
+.casherp-smtp-history strong { font-size: 12px; }
+.casherp-smtp-history span { color: #6c8094; font-size: 11px; margin-top: 2px; }
+.casherp-test-row { align-items: flex-end; display: grid; gap: 12px; grid-template-columns: minmax(220px, 1fr) auto; }
+
+.casherp-smtp-actions { align-items: center; background: #fff; border: 1px solid #dfe7ef; border-radius: 10px; display: flex; justify-content: space-between; padding: 14px 16px; }
+.casherp-smtp-actions > span { color: #587087; font-size: 12px; font-weight: 650; }
+.casherp-smtp-actions .is-unsaved i { color: #d97706; font-size: 8px; margin-inline-end: 4px; }
+.casherp-smtp-actions .is-saved i { color: #15803d; margin-inline-end: 4px; }
+.casherp-btn { align-items: center; border: 1px solid transparent; border-radius: 7px; cursor: pointer; display: inline-flex; font-size: 13px; font-weight: 750; gap: 7px; justify-content: center; min-height: 39px; padding: 9px 15px; transition: background-color .16s ease, box-shadow .16s ease, transform .16s ease; }
+.casherp-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.casherp-btn:focus-visible { box-shadow: 0 0 0 3px rgba(0, 78, 235, .2); outline: none; }
+.casherp-btn:disabled { cursor: not-allowed; opacity: .55; }
+.casherp-btn.is-primary { background: var(--theme-700, #004eeb); color: #fff; }
+.casherp-btn.is-primary:hover:not(:disabled) { background: var(--theme-800, #0040c1); }
+.casherp-btn.is-secondary { background: #fff; border-color: var(--theme-700, #004eeb); color: var(--theme-700, #004eeb); }
+.casherp-btn.is-secondary:hover:not(:disabled) { background: #f2f7ff; }
+
+.casherp-smtp-alert { align-items: flex-start; border: 1px solid; border-radius: 9px; display: flex; gap: 10px; margin-bottom: 16px; padding: 13px 14px; }
+.casherp-smtp-alert > i { font-size: 18px; margin-top: 1px; }
+.casherp-smtp-alert > div { flex: 1; }
+.casherp-smtp-alert strong, .casherp-smtp-alert p, .casherp-smtp-alert small { display: block; }
+.casherp-smtp-alert p { line-height: 1.45; margin: 2px 0 0; }
+.casherp-smtp-alert small { margin-top: 4px; opacity: .85; }
+.casherp-smtp-alert.is-success { background: #effaf3; border-color: #bce0c8; color: #17633a; }
+.casherp-smtp-alert.is-error { background: #fff4f3; border-color: #f0bbb6; color: #972d25; }
+.casherp-smtp-alert.is-warning { background: #fffaeb; border-color: #f1d58a; color: #7a4b00; }
+.casherp-alert-close { background: transparent; border: 0; color: inherit; font-size: 20px; line-height: 1; opacity: .65; padding: 0; }
+
+.casherp-smtp-guide { min-width: 0; }
+.casherp-guide-card { padding: 18px; }
+.casherp-guide-card h4 i { color: var(--theme-700, #004eeb); margin-inline-end: 6px; }
+.casherp-guide-card ol { list-style: none; margin: 15px 0 0; padding: 0; }
+.casherp-guide-card li { display: flex; gap: 9px; margin-bottom: 14px; }
+.casherp-guide-card li:last-child { margin-bottom: 0; }
+.casherp-guide-card li > span { align-items: center; background: #edf3f8; border-radius: 50%; color: #486581; display: flex; flex: 0 0 23px; font-size: 10px; font-weight: 800; height: 23px; justify-content: center; }
+.casherp-guide-card li strong { color: #334e68; display: block; font-size: 12px; }
+.casherp-guide-card li p { font-size: 11px; line-height: 1.45; margin-top: 2px; }
+.casherp-guide-card.is-note { background: #f8fafc; }
+.casherp-guide-card.is-note p { font-size: 12px; }
+
+@media (max-width: 1180px) {
+    .casherp-smtp-layout { grid-template-columns: 1fr; }
+    .casherp-smtp-guide { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .casherp-guide-card { margin: 0; }
+}
+
+@media (max-width: 767px) {
+    .casherp-smtp-tab-heading { display: block; padding: 18px; }
+    .casherp-smtp-security-badge { display: inline-block; margin-top: 12px; }
+    .casherp-smtp-card { padding: 17px; }
+    .casherp-delivery-options, .casherp-smtp-guide { grid-template-columns: 1fr; }
+    .casherp-field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .casherp-form-field.is-wide { grid-column: span 2; }
+    .casherp-test-row { align-items: stretch; grid-template-columns: 1fr; }
+    .casherp-smtp-actions { align-items: stretch; flex-direction: column; gap: 10px; }
+    .casherp-btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .casherp-field-grid { grid-template-columns: 1fr; }
+    .casherp-form-field.is-wide { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .casherp-choice, .casherp-btn, .casherp-form-field input, .casherp-form-field select { transition: none; }
+}
+
+[dir="rtl"] .casherp-input-suffix input { border-radius: 0 7px 7px 0; }
+[dir="rtl"] .casherp-input-suffix span { border-left: 1px solid #bcccdc; border-radius: 7px 0 0 7px; border-right: 0; }

@@ -1,0 +1,11 @@
+{
+    "name": "Hms",
+    "alias": "hms",
+    "description": "SaaS hotel management and property operations for CashERP, including reservations, folios, night audit, rate plans, groups, guest experience, services, revenue and a signed channel-integration foundation",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Hms\\Providers\\HmsServiceProvider"
+    ],
+    "files": []
+}
