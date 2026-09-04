@@ -8,6 +8,7 @@ use App\Utils\InstallUtil;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Carbon\Carbon;
@@ -21,28 +22,35 @@ class DummyBusinessSeeder extends Seeder
      */
     public function run()
     {
+        $this->seedDemoLogins();
+
         DB::beginTransaction();
 
+        try {
         $password = Hash::make('123456');
 
         // $timezone = 'America/Phoenix'
         // config(['app.timezone' => $timezone]);
         // date_default_timezone_set($timezone);
 
-        $today = \Carbon::now()->format('Y-m-d H:i:s');
-        $yesterday = \Carbon::now()->subDays(2)->format('Y-m-d H:i:s');
-        $last_week = \Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
-        $last_15th_day = \Carbon::now()->subDays(15)->format('Y-m-d H:i:s');
-        $last_month = \Carbon::now()->subDays(30)->format('Y-m-d H:i:s');
+        $today = Carbon::now()->format('Y-m-d H:i:s');
+        $yesterday = Carbon::now()->subDays(2)->format('Y-m-d H:i:s');
+        $last_week = Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
+        $last_15th_day = Carbon::now()->subDays(15)->format('Y-m-d H:i:s');
+        $last_month = Carbon::now()->subDays(30)->format('Y-m-d H:i:s');
 
-        $next_6_month = \Carbon::now()->addMonths(6)->format('Y-m-d');
-        $next_12_month = \Carbon::now()->addMonths(12)->format('Y-m-d');
-        $next_18_month = \Carbon::now()->addMonths(18)->format('Y-m-d');
+        $next_6_month = Carbon::now()->addMonths(6)->format('Y-m-d');
+        $next_12_month = Carbon::now()->addMonths(12)->format('Y-m-d');
+        $next_18_month = Carbon::now()->addMonths(18)->format('Y-m-d');
 
-        $start_of_week = \Carbon::now()->startOfWeek()->format('Y-m-d');
-        $end_of_week = \Carbon::now()->endOfWeek()->format('Y-m-d');
+        $start_of_week = Carbon::now()->startOfWeek()->format('Y-m-d');
+        $end_of_week = Carbon::now()->endOfWeek()->format('Y-m-d');
 
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        try {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        } catch (\Throwable $e) {
+            // SQLite and some hosts do not support this statement.
+        }
 
         $shortcuts = '{"pos":{"express_checkout":"shift+e","pay_n_ckeckout":"shift+p","draft":"shift+d","cancel":"shift+c","edit_discount":"shift+i","edit_order_tax":"shift+t","add_payment_row":"shift+r","finalize_payment":"shift+f","recent_product_quantity":"f2","add_new_product":"f4"}}';
 
@@ -238,8 +246,8 @@ class DummyBusinessSeeder extends Seeder
                 'id' => 1,
                 'hms_room_type_id' => 1,
                 'business_id' => 1,
-                'start_date' => \Carbon::now()->subDays(7)->format('Y-m-d'),
-                'end_date' => \Carbon::now()->addDays(30)->format('Y-m-d'),
+                'start_date' => Carbon::now()->subDays(7)->format('Y-m-d'),
+                'end_date' => Carbon::now()->addDays(30)->format('Y-m-d'),
                 'coupon_code' => 'STD10',
                 'discount' => 10,
                 'discount_type' => 'percentage',
@@ -250,8 +258,8 @@ class DummyBusinessSeeder extends Seeder
                 'id' => 2,
                 'hms_room_type_id' => 2,
                 'business_id' => 5,
-                'start_date' => \Carbon::now()->subDays(7)->format('Y-m-d'),
-                'end_date' => \Carbon::now()->addDays(30)->format('Y-m-d'),
+                'start_date' => Carbon::now()->subDays(7)->format('Y-m-d'),
+                'end_date' => Carbon::now()->addDays(30)->format('Y-m-d'),
                 'coupon_code' => 'DLX15',
                 'discount' => 15,
                 'discount_type' => 'percentage',
@@ -262,8 +270,8 @@ class DummyBusinessSeeder extends Seeder
 
         DB::table('hms_coupons')->insert($hms_coupons);
 
-        $hms_arrival = \Carbon::now()->addDays(1)->format('Y-m-d H:i:s');
-        $hms_departure = \Carbon::now()->addDays(3)->format('Y-m-d H:i:s');
+        $hms_arrival = Carbon::now()->addDays(1)->format('Y-m-d H:i:s');
+        $hms_departure = Carbon::now()->addDays(3)->format('Y-m-d H:i:s');
 
         $hms_booking_transactions = [
             [
@@ -1370,9 +1378,9 @@ class DummyBusinessSeeder extends Seeder
         ];
         DB::table('packages')->insert($packages);
 
-        $subscription_start = \Carbon::today()->subDay(2)->toDateString();
-        $subscription_trial = \Carbon::today()->addDays(8)->toDateString();
-        $subscription_end = \Carbon::today()->addDays(28)->toDateString();
+        $subscription_start = Carbon::today()->subDay(2)->toDateString();
+        $subscription_trial = Carbon::today()->addDays(8)->toDateString();
+        $subscription_end = Carbon::today()->addDays(28)->toDateString();
 
         $subscriptions = [
             ['id' => '1', 'business_id' => '1', 'package_id' => '3', 'start_date' => $subscription_start, 'trial_end_date' => $subscription_trial, 'end_date' => $subscription_end, 'package_price' => '599.99', 'package_details' => '{"location_count":0,"user_count":0,"product_count":0,"invoice_count":0,"name":"Unlimited","woocommerce_module":1, "essentials_module":1}', 'created_id' => '1', 'paid_via' => 'stripe', 'payment_transaction_id' => 'ch_1CuLdQAhokBpT93LVZNg2At6', 'status' => 'approved', 'deleted_at' => null, 'created_at' => '2018-08-01 07:49:09', 'updated_at' => '2018-08-01 07:49:09'],
@@ -1828,11 +1836,199 @@ $packages = [
         }
     }
     
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        try {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        } catch (\Throwable $e) {
+            // SQLite and some hosts do not support this statement.
+        }
 
-        $installUtil = new InstallUtil();
-        $installUtil->createExistingProductsVariationsToTemplate();
+        if (class_exists(InstallUtil::class)) {
+            try {
+                $installUtil = new InstallUtil();
+                $installUtil->createExistingProductsVariationsToTemplate();
+            } catch (\Throwable $e) {
+                $this->warn('Skipped product variation template: '.$e->getMessage());
+            }
+        }
 
         DB::commit();
+        $this->info('Dummy catalog seeded. Extra demo logins use password 123456.');
+        } catch (\Throwable $e) {
+            try {
+                DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            } catch (\Throwable $ignored) {
+            }
+
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            $this->warn('Dummy catalog skipped: '.$e->getMessage());
+            $this->info('Demo logins are still available. Username / password 123456.');
+        }
+    }
+
+    private function seedDemoLogins(): void
+    {
+        if (! Schema::hasTable('users') || ! Schema::hasTable('business')) {
+            return;
+        }
+
+        $password = Hash::make('123456');
+        $now = Carbon::now();
+        $currencyId = null;
+        if (Schema::hasTable('currencies')) {
+            $currencyId = DB::table('currencies')->where('code', 'USD')->value('id')
+                ?: DB::table('currencies')->value('id');
+        }
+
+        $shopId = DB::table('business')->orderBy('id')->value('id');
+        if (! $shopId) {
+            $shopId = DB::table('business')->insertGetId($this->filterColumns('business', [
+                'name' => 'CashERP Demo',
+                'currency_id' => $currencyId,
+                'time_zone' => 'Asia/Dhaka',
+                'is_active' => 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]));
+        }
+
+        $this->ensureBusinessLocation($shopId, DB::table('business')->where('id', $shopId)->value('name') ?: 'Main');
+
+        $namedBusinesses = [
+            'pharmacy' => 'Awesome Pharmacy',
+            'electronics' => 'Ultimate Electronics',
+            'services' => 'Awesome Services',
+            'restaurant' => 'Awesome Restaurant',
+            'manufacturers' => 'Manufacturers Demo',
+        ];
+
+        $businessIds = ['shop' => $shopId];
+        foreach ($namedBusinesses as $key => $name) {
+            $id = DB::table('business')->where('name', $name)->value('id');
+            if (! $id) {
+                $id = DB::table('business')->insertGetId($this->filterColumns('business', [
+                    'name' => $name,
+                    'currency_id' => $currencyId,
+                    'time_zone' => 'Asia/Dhaka',
+                    'is_active' => 1,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]));
+            }
+            $this->ensureBusinessLocation($id, $name);
+            $businessIds[$key] = $id;
+        }
+
+        $users = [
+            ['username' => 'admin', 'surname' => 'Mr', 'first_name' => 'Admin', 'last_name' => 'User', 'email' => 'admin@email.com', 'business' => 'shop'],
+            ['username' => 'admin@email.com', 'surname' => 'Mr', 'first_name' => 'Admin', 'last_name' => 'User', 'email' => 'admin@email.com', 'business' => 'shop'],
+            ['username' => 'cashier', 'surname' => 'Mr', 'first_name' => 'Demo', 'last_name' => 'Cashier', 'email' => 'cashier@example.com', 'business' => 'shop'],
+            ['username' => 'demo-admin', 'surname' => 'Mr.', 'first_name' => 'Demo', 'last_name' => 'Admin', 'email' => 'demoadmin@example.com', 'business' => 'shop'],
+            ['username' => 'superadmin', 'surname' => 'Mr.', 'first_name' => 'Super', 'last_name' => 'Admin', 'email' => 'superadmin@example.com', 'business' => 'shop'],
+            ['username' => 'woocommerce_user', 'surname' => 'Mr.', 'first_name' => 'WooCommerce', 'last_name' => 'User', 'email' => 'woo@example.com', 'business' => 'shop'],
+            ['username' => 'admin-essentials', 'surname' => 'Mr', 'first_name' => 'Admin Essential', 'last_name' => null, 'email' => 'admin_essentials@example.com', 'business' => 'shop'],
+            ['username' => 'admin-pharmacy', 'surname' => 'Mr', 'first_name' => 'Demo', 'last_name' => 'Admin', 'email' => 'admin-pharma@example.com', 'business' => 'pharmacy'],
+            ['username' => 'admin-electronics', 'surname' => 'Mr', 'first_name' => 'Demo', 'last_name' => 'Admin', 'email' => 'admin-electronics@example.com', 'business' => 'electronics'],
+            ['username' => 'admin-services', 'surname' => 'Mr', 'first_name' => 'Demo', 'last_name' => 'Admin', 'email' => 'admin-services@example.com', 'business' => 'services'],
+            ['username' => 'admin-restaurant', 'surname' => 'Mr', 'first_name' => 'Demo', 'last_name' => 'Admin', 'email' => 'admin-restaurant@example.com', 'business' => 'restaurant'],
+            ['username' => 'kevin-nicols', 'surname' => 'Mr', 'first_name' => 'Kevin', 'last_name' => 'Nicols', 'email' => 'kevin@example.com', 'business' => 'restaurant'],
+            ['username' => 'manufacturer-demo', 'surname' => 'Mr.', 'first_name' => 'mike', 'last_name' => 'lee', 'email' => 'manufacturer-demo@demo.com', 'business' => 'manufacturers'],
+        ];
+
+        foreach ($users as $user) {
+            $businessId = $businessIds[$user['business']] ?? $shopId;
+            $existingId = DB::table('users')->where('username', $user['username'])->value('id');
+
+            if ($existingId) {
+                DB::table('users')->where('id', $existingId)->update($this->filterColumns('users', [
+                    'password' => $password,
+                    'allow_login' => 1,
+                    'status' => 'active',
+                    'user_type' => 'user',
+                    'updated_at' => $now,
+                ]));
+                continue;
+            }
+
+            DB::table('users')->insert($this->filterColumns('users', [
+                'surname' => $user['surname'],
+                'first_name' => $user['first_name'],
+                'last_name' => $user['last_name'],
+                'username' => $user['username'],
+                'email' => $user['email'],
+                'password' => $password,
+                'language' => 'en',
+                'business_id' => $businessId,
+                'is_cmmsn_agnt' => 0,
+                'cmmsn_percent' => 0,
+                'user_type' => 'user',
+                'allow_login' => 1,
+                'status' => 'active',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]));
+        }
+
+        foreach ($businessIds as $id) {
+            $ownerId = DB::table('users')->where('business_id', $id)->orderBy('id')->value('id');
+            if ($ownerId && Schema::hasColumn('business', 'owner_id')) {
+                DB::table('business')->where('id', $id)->update(['owner_id' => $ownerId]);
+            }
+        }
+
+        $this->info('Demo logins ready. Password for all accounts: 123456');
+    }
+
+    private function ensureBusinessLocation(int $businessId, string $name): void
+    {
+        if (! Schema::hasTable('business_locations')) {
+            return;
+        }
+
+        $exists = DB::table('business_locations')->where('business_id', $businessId)->exists();
+        if ($exists) {
+            return;
+        }
+
+        DB::table('business_locations')->insert($this->filterColumns('business_locations', [
+            'business_id' => $businessId,
+            'name' => $name,
+            'landmark' => 'Linking Street',
+            'country' => 'Bangladesh',
+            'state' => 'Dhaka',
+            'city' => 'Dhaka',
+            'zip_code' => '1205',
+            'is_active' => 1,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]));
+    }
+
+    private function filterColumns(string $table, array $payload): array
+    {
+        $clean = [];
+        foreach ($payload as $key => $value) {
+            if (Schema::hasColumn($table, $key)) {
+                $clean[$key] = $value;
+            }
+        }
+
+        return $clean;
+    }
+
+    private function info(string $message): void
+    {
+        if ($this->command) {
+            $this->command->info($message);
+        }
+    }
+
+    private function warn(string $message): void
+    {
+        if ($this->command) {
+            $this->command->warn($message);
+        }
     }
 }
