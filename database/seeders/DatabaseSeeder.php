@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(CurrenciesTableSeeder::class);
         $this->call(LocalAdminSeeder::class);
+        $this->call(DemoLoginsSeeder::class);
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 use App\Rules\ReCaptcha;
 
 
@@ -202,6 +203,18 @@ class LoginController extends Controller
             ]);
         }
        
+    }
+
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        $message = trans('auth.failed');
+        if ($message === 'auth.failed') {
+            $message = 'These credentials do not match our records.';
+        }
+
+        throw ValidationException::withMessages([
+            $this->username() => [$message],
+        ]);
     }
 
 }

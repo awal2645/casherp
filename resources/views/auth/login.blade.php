@@ -31,12 +31,14 @@
                 <p class="muted">Use your username or email address, then your password.</p>
 
                 @if ($errors->any())
-                    <div class="field-error" role="alert">{{ $errors->first() }}</div>
+                    <div class="field-error" role="alert">{{ $errors->first() === 'auth.failed' ? 'These credentials do not match our records.' : $errors->first() }}</div>
                 @endif
 
                 @if (config('app.env') == 'demo')
                     <div class="demo-note">Demo mode: use username <strong>admin</strong> / password <strong>123456</strong></div>
                 @endif
+
+                @include('auth.partials.role_wise_logins')
 
                 <form method="POST" action="{{ route('login') }}" id="login-form" class="setup-form">
                     {{ csrf_field() }}
@@ -45,7 +47,7 @@
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
                             <input type="text" name="username" id="username" value="{{ $username }}" required autofocus placeholder="Enter your email or username">
                         </span>
-                        @if ($errors->has('username'))
+                        @if ($errors->has('username') && $errors->first('username') !== $errors->first())
                             <span class="field-error">{{ $errors->first('username') }}</span>
                         @endif
                     </label>

@@ -62,6 +62,7 @@ return [
     'google_recaptcha_key' => env('GOOGLE_RECAPTCHA_KEY'),
     'google_recaptcha_secret' => env('GOOGLE_RECAPTCHA_SECRET'),
     'enable_recaptcha' => env('ENABLE_RECAPTCHA', false),
+    'enable_demo_quick_login' => env('ENABLE_DEMO_QUICK_LOGIN', true),
     // Enable disposable email validation (public registration)
     'do_not_allow_disposable_email' => env('DO_NOT_ALLOW_DISPOSABLE_EMAIL', false),
     

@@ -652,6 +652,14 @@ button { font: inherit; }
 .or-sep::before, .or-sep::after { content: ""; height: 1px; background: var(--line); }
 .login-switch { margin-top: 16px; text-align: center; color: var(--muted); }
 .demo-note { margin-bottom: 12px; padding: 10px 12px; border-radius: 10px; background: #FFF8E8; color: #8A5A00; font-size: 13px; }
+.role-wise-login { margin: 4px 0 6px; }
+.role-wise-login-title { margin: 0 0 4px; color: var(--navy); font-size: 15px; font-weight: 800; }
+.role-wise-login-copy { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.role-wise-login-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.role-wise-login-form { margin: 0; }
+.role-login-btn { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: #F7FAFF; color: var(--navy); font-weight: 800; font-size: 13.5px; cursor: pointer; text-align: left; }
+.role-login-btn small { font-weight: 600; color: var(--muted); font-size: 11.5px; }
+.role-login-btn:hover { border-color: #8FB2FF; background: #EEF4FF; box-shadow: 0 8px 18px rgba(0,82,255,.08); }
 .field-error { color: #D64545; font-size: 12.5px; font-weight: 600; }
 .login-trust { margin-top: 28px; }
 

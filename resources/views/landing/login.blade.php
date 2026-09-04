@@ -34,6 +34,8 @@
                     <div class="demo-note">Demo mode: use username <strong>admin</strong> / password <strong>123456</strong></div>
                 @endif
 
+                @include('auth.partials.role_wise_logins')
+
                 <form method="POST" action="{{ route('login') }}" id="login-form" class="setup-form">
                     {{ csrf_field() }}
                     <label>Email address / Username

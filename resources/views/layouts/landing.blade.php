@@ -14,8 +14,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/casherp-landing.css') }}?v=pricing47">
-    <link rel="stylesheet" href="{{ asset('css/casherp-landing-polish.css') }}?v=v21-merge-1">
+    <link rel="stylesheet" href="{{ asset('css/casherp-landing.css') }}?v=pricing48">
+    <link rel="stylesheet" href="{{ asset('css/casherp-landing-polish.css') }}?v=v21-merge-2">
     @stack('styles')
     <title>@yield('title', 'CashERP | One ERP. Every part of your business.')</title>
 </head>
