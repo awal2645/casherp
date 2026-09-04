@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\NotificationTemplate;
 use App\User;
-use App\Utils\InstallUtil;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -29,18 +27,18 @@ class DummyBusinessSeeder extends Seeder
         // config(['app.timezone' => $timezone]);
         // date_default_timezone_set($timezone);
 
-        $today = \Carbon::now()->format('Y-m-d H:i:s');
-        $yesterday = \Carbon::now()->subDays(2)->format('Y-m-d H:i:s');
-        $last_week = \Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
-        $last_15th_day = \Carbon::now()->subDays(15)->format('Y-m-d H:i:s');
-        $last_month = \Carbon::now()->subDays(30)->format('Y-m-d H:i:s');
+        $today = Carbon::now()->format('Y-m-d H:i:s');
+        $yesterday = Carbon::now()->subDays(2)->format('Y-m-d H:i:s');
+        $last_week = Carbon::now()->subDays(7)->format('Y-m-d H:i:s');
+        $last_15th_day = Carbon::now()->subDays(15)->format('Y-m-d H:i:s');
+        $last_month = Carbon::now()->subDays(30)->format('Y-m-d H:i:s');
 
-        $next_6_month = \Carbon::now()->addMonths(6)->format('Y-m-d');
-        $next_12_month = \Carbon::now()->addMonths(12)->format('Y-m-d');
-        $next_18_month = \Carbon::now()->addMonths(18)->format('Y-m-d');
+        $next_6_month = Carbon::now()->addMonths(6)->format('Y-m-d');
+        $next_12_month = Carbon::now()->addMonths(12)->format('Y-m-d');
+        $next_18_month = Carbon::now()->addMonths(18)->format('Y-m-d');
 
-        $start_of_week = \Carbon::now()->startOfWeek()->format('Y-m-d');
-        $end_of_week = \Carbon::now()->endOfWeek()->format('Y-m-d');
+        $start_of_week = Carbon::now()->startOfWeek()->format('Y-m-d');
+        $end_of_week = Carbon::now()->endOfWeek()->format('Y-m-d');
 
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
 
@@ -238,8 +236,8 @@ class DummyBusinessSeeder extends Seeder
                 'id' => 1,
                 'hms_room_type_id' => 1,
                 'business_id' => 1,
-                'start_date' => \Carbon::now()->subDays(7)->format('Y-m-d'),
-                'end_date' => \Carbon::now()->addDays(30)->format('Y-m-d'),
+                'start_date' => Carbon::now()->subDays(7)->format('Y-m-d'),
+                'end_date' => Carbon::now()->addDays(30)->format('Y-m-d'),
                 'coupon_code' => 'STD10',
                 'discount' => 10,
                 'discount_type' => 'percentage',
@@ -250,8 +248,8 @@ class DummyBusinessSeeder extends Seeder
                 'id' => 2,
                 'hms_room_type_id' => 2,
                 'business_id' => 5,
-                'start_date' => \Carbon::now()->subDays(7)->format('Y-m-d'),
-                'end_date' => \Carbon::now()->addDays(30)->format('Y-m-d'),
+                'start_date' => Carbon::now()->subDays(7)->format('Y-m-d'),
+                'end_date' => Carbon::now()->addDays(30)->format('Y-m-d'),
                 'coupon_code' => 'DLX15',
                 'discount' => 15,
                 'discount_type' => 'percentage',
@@ -262,8 +260,8 @@ class DummyBusinessSeeder extends Seeder
 
         DB::table('hms_coupons')->insert($hms_coupons);
 
-        $hms_arrival = \Carbon::now()->addDays(1)->format('Y-m-d H:i:s');
-        $hms_departure = \Carbon::now()->addDays(3)->format('Y-m-d H:i:s');
+        $hms_arrival = Carbon::now()->addDays(1)->format('Y-m-d H:i:s');
+        $hms_departure = Carbon::now()->addDays(3)->format('Y-m-d H:i:s');
 
         $hms_booking_transactions = [
             [
@@ -1370,9 +1368,9 @@ class DummyBusinessSeeder extends Seeder
         ];
         DB::table('packages')->insert($packages);
 
-        $subscription_start = \Carbon::today()->subDay(2)->toDateString();
-        $subscription_trial = \Carbon::today()->addDays(8)->toDateString();
-        $subscription_end = \Carbon::today()->addDays(28)->toDateString();
+        $subscription_start = Carbon::today()->subDay(2)->toDateString();
+        $subscription_trial = Carbon::today()->addDays(8)->toDateString();
+        $subscription_end = Carbon::today()->addDays(28)->toDateString();
 
         $subscriptions = [
             ['id' => '1', 'business_id' => '1', 'package_id' => '3', 'start_date' => $subscription_start, 'trial_end_date' => $subscription_trial, 'end_date' => $subscription_end, 'package_price' => '599.99', 'package_details' => '{"location_count":0,"user_count":0,"product_count":0,"invoice_count":0,"name":"Unlimited","woocommerce_module":1, "essentials_module":1}', 'created_id' => '1', 'paid_via' => 'stripe', 'payment_transaction_id' => 'ch_1CuLdQAhokBpT93LVZNg2At6', 'status' => 'approved', 'deleted_at' => null, 'created_at' => '2018-08-01 07:49:09', 'updated_at' => '2018-08-01 07:49:09'],
@@ -1385,16 +1383,18 @@ class DummyBusinessSeeder extends Seeder
 
         DB::table('subscriptions')->insert($subscriptions);
 
-        $notification_template_data = NotificationTemplate::defaultNotificationTemplates();
-        $notification_template_array = [];
-        for ($i = 1; $i < 6; $i++) {
-            foreach ($notification_template_data as $notification_template) {
-                $notification_template['business_id'] = $i;
-                $notification_template_array[] = $notification_template;
+        if (class_exists(\App\NotificationTemplate::class) && \Illuminate\Support\Facades\Schema::hasTable('notification_templates')) {
+            $notification_template_data = \App\NotificationTemplate::defaultNotificationTemplates();
+            $notification_template_array = [];
+            for ($i = 1; $i < 6; $i++) {
+                foreach ($notification_template_data as $notification_template) {
+                    $notification_template['business_id'] = $i;
+                    $notification_template_array[] = $notification_template;
+                }
             }
-        }
 
-        DB::table('notification_templates')->insert($notification_template_array);
+            DB::table('notification_templates')->insert($notification_template_array);
+        }
 
         $mfg_recipes = [
             ['id' => '1', 'product_id' => '81', 'variation_id' => '129', 'instructions' => '<p>Steps for making pizza can be written here ...</p>', 'waste_percent' => '0.00', 'ingredients_cost' => '2660.0000', 'extra_cost' => '10.0000', 'total_quantity' => '1.0000', 'final_price' => '2926.0000', 'sub_unit_id' => '9', 'created_at' => '2019-08-18 19:05:09', 'updated_at' => '2019-08-18 19:08:12'],
@@ -1830,8 +1830,10 @@ $packages = [
     
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 
-        $installUtil = new InstallUtil();
-        $installUtil->createExistingProductsVariationsToTemplate();
+        if (class_exists(\App\Utils\InstallUtil::class)) {
+            $installUtil = new \App\Utils\InstallUtil();
+            $installUtil->createExistingProductsVariationsToTemplate();
+        }
 
         DB::commit();
     }

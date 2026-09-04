@@ -14,11 +14,11 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "aloha/twilio": "^4.0",
         "arcanedev/log-viewer": "9.x",
         "automattic/woocommerce": "^3.0",
-        "barryvdh/laravel-dompdf": "^2.0",
+        "barryvdh/laravel-dompdf": "^3.1",
         "composer/semver": "^3.0",
         "consoletvs/charts": "^6.5",
         "giggsey/libphonenumber-for-php": "^8.12",
