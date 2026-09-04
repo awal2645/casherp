@@ -21,12 +21,13 @@ class DummyBusinessSeeder extends Seeder
     public function run()
     {
         if (Schema::hasTable('users') && DB::table('users')->where('username', 'admin')->exists()) {
-            if ($this->command) {
-                $this->command->info('Demo user admin already exists. Skipping DummyBusinessSeeder.');
-            }
+            $this->ensureAdminCanLogin();
+            $this->info('Demo login already exists: username admin / password 123456');
 
             return;
         }
+
+        $this->seedCurrenciesIfNeeded();
 
         DB::beginTransaction();
 
@@ -1576,125 +1577,117 @@ class DummyBusinessSeeder extends Seeder
 
         $this->insertIfTableExists('product_locations', $product_locations);
 
+        $cashierPermissions = ['sell.view', 'sell.create', 'sell.update', 'sell.delete', 'view_cash_register', 'close_cash_register', 'print_invoice'];
+        $this->ensurePermissions(array_merge($cashierPermissions, [
+            'dashboard.data',
+            'access_all_locations',
+            'location.1',
+            'location.2',
+            'location.3',
+            'location.4',
+            'location.5',
+            'location.6',
+        ]));
+
         //Roles and permissions for business 1
-        $admin_role1 = Role::create(['name' => 'Admin#1',
+        $admin_role1 = $this->createRole(['name' => 'Admin#1',
             'business_id' => 1,
             'guard_name' => 'web',
             'is_default' => 1,
         ]);
-        $cashier_role1 = Role::create(['name' => 'Cashier#1',
+        $cashier_role1 = $this->createRole(['name' => 'Cashier#1',
             'business_id' => 1,
             'guard_name' => 'web',
         ]);
 
-        $cashier_role1->syncPermissions(['sell.view', 'sell.create', 'sell.update', 'sell.delete', 'view_cash_register', 'close_cash_register', 'print_invoice']);
+        $this->syncRolePermissions($cashier_role1, $cashierPermissions);
 
-        $admin1 = User::findOrFail(1);
-        $admin_essentials = User::findOrFail(11);
-        $superadmin1 = User::findOrFail(9);
-        $woocommerce1 = User::findOrFail(10);
-        $cashier1 = User::findOrFail(2);
-        $demo_user1 = User::findOrFail(3);
-
-        $admin1->assignRole('Admin#1');
-        $admin_essentials->assignRole('Admin#1');
-        $superadmin1->assignRole('Admin#1');
-        $cashier1->assignRole('Cashier#1');
-        $demo_user1->assignRole('Admin#1');
-        $woocommerce1->assignRole('Admin#1');
-        Permission::create(['name' => 'location.1']);
-
-        //give location.1 permissions
-        $cashier1->givePermissionTo('location.1');
+        $this->assignRoleIfUserExists(1, 'Admin#1');
+        $this->assignRoleIfUserExists(11, 'Admin#1');
+        $this->assignRoleIfUserExists(9, 'Admin#1');
+        $this->assignRoleIfUserExists(10, 'Admin#1');
+        $cashier1 = $this->assignRoleIfUserExists(2, 'Cashier#1');
+        $this->assignRoleIfUserExists(3, 'Admin#1');
+        if ($cashier1) {
+            $this->giveUserPermission($cashier1, 'location.1');
+        }
 
         //Roles and permissions for business 2
-        $admin_role2 = Role::create(['name' => 'Admin#2',
+        $admin_role2 = $this->createRole(['name' => 'Admin#2',
             'business_id' => 2,
             'guard_name' => 'web',
             'is_default' => 1,
         ]);
-        $cashier_role2 = Role::create(['name' => 'Cashier#2',
+        $cashier_role2 = $this->createRole(['name' => 'Cashier#2',
             'business_id' => 2,
             'guard_name' => 'web',
         ]);
 
-        $cashier_role2->syncPermissions(['sell.view', 'sell.create', 'sell.update', 'sell.delete', 'view_cash_register', 'close_cash_register', 'print_invoice']);
+        $this->syncRolePermissions($cashier_role2, $cashierPermissions);
 
-        $admin2 = User::findOrFail(4);
-
-        $admin2->assignRole('Admin#2');
-        Permission::create(['name' => 'location.2']);
+        $this->assignRoleIfUserExists(4, 'Admin#2');
 
         //Roles and permissions for business 3
-        $admin_role3 = Role::create(['name' => 'Admin#3',
+        $admin_role3 = $this->createRole(['name' => 'Admin#3',
             'business_id' => 3,
             'guard_name' => 'web',
         ]);
-        $cashier_role3 = Role::create(['name' => 'Cashier#3',
+        $cashier_role3 = $this->createRole(['name' => 'Cashier#3',
             'business_id' => 3,
             'guard_name' => 'web',
         ]);
 
-        $cashier_role3->syncPermissions(['sell.view', 'sell.create', 'sell.update', 'sell.delete', 'view_cash_register', 'close_cash_register', 'print_invoice']);
+        $this->syncRolePermissions($cashier_role3, $cashierPermissions);
 
-        $admin3 = User::findOrFail(5);
-
-        $admin3->assignRole('Admin#3');
-        Permission::create(['name' => 'location.3']);
+        $this->assignRoleIfUserExists(5, 'Admin#3');
 
         //Roles and permissions for business 4
-        $admin_role4 = Role::create(['name' => 'Admin#4',
+        $admin_role4 = $this->createRole(['name' => 'Admin#4',
             'business_id' => 4,
             'guard_name' => 'web',
             'is_default' => 1,
         ]);
-        $cashier_role4 = Role::create(['name' => 'Cashier#4',
+        $cashier_role4 = $this->createRole(['name' => 'Cashier#4',
             'business_id' => 4,
             'guard_name' => 'web',
         ]);
 
-        $cashier_role4->syncPermissions(['sell.view', 'sell.create', 'sell.update', 'sell.delete', 'view_cash_register', 'close_cash_register', 'print_invoice']);
+        $this->syncRolePermissions($cashier_role4, $cashierPermissions);
 
-        $admin4 = User::findOrFail(6);
-
-        $admin4->assignRole('Admin#4');
-        Permission::create(['name' => 'location.4']);
+        $this->assignRoleIfUserExists(6, 'Admin#4');
 
         //Roles and permissions for business 5
-        $admin_role5 = Role::create(['name' => 'Admin#5',
+        $admin_role5 = $this->createRole(['name' => 'Admin#5',
             'business_id' => 5,
             'guard_name' => 'web',
             'is_default' => 1,
         ]);
-        $cashier_role5 = Role::create(['name' => 'Cashier#5',
+        $cashier_role5 = $this->createRole(['name' => 'Cashier#5',
             'business_id' => 5,
             'guard_name' => 'web',
         ]);
 
-        $cashier_role5->syncPermissions(['sell.view', 'sell.create', 'sell.update', 'sell.delete', 'view_cash_register', 'close_cash_register', 'print_invoice']);
+        $this->syncRolePermissions($cashier_role5, $cashierPermissions);
 
-        $admin5 = User::findOrFail(7);
+        $this->assignRoleIfUserExists(7, 'Admin#5');
 
-        $admin5->assignRole('Admin#5');
-        Permission::create(['name' => 'location.5']);
-
-        $waiter_role5 = Role::create(['name' => 'Waiter#5',
+        $waiter_role5 = $this->createRole(['name' => 'Waiter#5',
             'business_id' => 5,
             'guard_name' => 'web',
             'is_service_staff' => 1,
         ]);
-        $waiter_role5->syncPermissions(['dashboard.data']);
-        $waiter5 = User::findOrFail(8);
-        $waiter5->assignRole('Waiter#5');
-        $waiter5->givePermissionTo('location.5');
+        $this->syncRolePermissions($waiter_role5, ['dashboard.data']);
+        $waiter5 = $this->assignRoleIfUserExists(8, 'Waiter#5');
+        if ($waiter5) {
+            $this->giveUserPermission($waiter5, 'location.5');
+        }
 
-        $admin_role6 = Role::create(['name' => 'Admin#6',
+        $admin_role6 = $this->createRole(['name' => 'Admin#6',
             'business_id' => 6,
             'guard_name' => 'web',
             'is_default' => 1,
         ]);
-        $admin6 = User::findOrFail(12);
-        $admin6->assignRole('Admin#6');
+        $this->assignRoleIfUserExists(12, 'Admin#6');
 
         //Essential Module : Dummy Data
         $essentials_leave_types = [
@@ -1834,26 +1827,66 @@ $packages = [
                 'postal_number' => '11564',
                 'country_name' => 'Saudi Arabia',
             ];
-            DB::table('business_locations')
+            try {
+                $payload = ['zatca_details' => json_encode($zatca_details)];
+                if (Schema::hasColumn('business_locations', 'zatca_response')) {
+                    $payload['zatca_response'] = '{"success":true,"message":"ISSUED"}';
+                }
+                DB::table('business_locations')
                     ->where('id', $location->id)
-                    ->update(['zatca_details' => json_encode($zatca_details), 'zatca_response' => '{"success":true,"message":"ISSUED","data":{"complianceCertificate":"TUlJQjZUQ0NBWStnQXdJQkFnSUdBWldvbnlUcE1Bb0dDQ3FHU000OUJBTUNNQlV4RXpBUkJnTlZCQU1NQ21WSmJuWnZhV05wYm1jd0hoY05NalV3TXpFNE1Ea3pPVEV4V2hjTk16QXdNekUzTWpFd01EQXdXakJETVE0d0RBWURWUVFEREFWVVUxUkRUekVSTUE4R0ExVUVDd3dJVkZOVVEwOHRVMEV4RVRBUEJnTlZCQW9NQ0ZSVFZFTlBMVk5CTVFzd0NRWURWUVFHRXdKVFFUQldNQkFHQnlxR1NNNDlBZ0VHQlN1QkJBQUtBMElBQkNoQ3VxVkFSZmhicnR3azlFbFRNWkVzMGpsbXdQQmFaSVZYY1pCVVNvUW41WitlU1JRdWVteTliVkp5UndpOXRzcll6OXhMbW5LdWRVaWJwbGlTb2ZHamdaOHdnWnd3REFZRFZSMFRBUUgvQkFJd0FEQ0Jpd1lEVlIwUkJJR0RNSUdBcEg0d2ZERWRNQnNHQTFVRUJBd1VNUzFUUkZOQmZESXRSa2RFVTN3ekxWTkVSa2N4SHpBZEJnb0praWFKay9Jc1pBRUJEQTh6TURBd01EQXdNREF3TURBd01ETXhEVEFMQmdOVkJBd01CREV4TURBeEVUQVBCZ05WQkJvTUNGSk5Va1V4TWpNME1SZ3dGZ1lEVlFRUERBOVVjbUZ1YzNCdmNuUmhkR2x2Ym5Nd0NnWUlLb1pJemowRUF3SURTQUF3UlFJaEFKMmZTOUJSV2N1cVdlbUhlRzA2MjVHUUt4L3hFTE1vd2RwcWV2bXlZMUV2QWlBVXh1MkNQUVhSaEVseUxYa0ViWFQrOUE3bDZ5L09NTFM0cGY2RkRWQmJJUT09","complianceSecret":"k7mFPUhn8BpsDt0UM2zwT83LeQm5ENIluKjhLecPBAE=","complianceRequestID":"1234567890123","productionCertificate":"TUlJRDNqQ0NBNFNnQXdJQkFnSVRFUUFBT0FQRjkwQWpzL3hjWHdBQkFBQTRBekFLQmdncWhrak9QUVFEQWpCaU1SVXdFd1lLQ1pJbWlaUHlMR1FCR1JZRmJHOWpZV3d4RXpBUkJnb0praWFKay9Jc1pBRVpGZ05uYjNZeEZ6QVZCZ29Ka2lhSmsvSXNaQUVaRmdkbGVIUm5ZWHAwTVJzd0dRWURWUVFERXhKUVVscEZTVTVXVDBsRFJWTkRRVFF0UTBFd0hoY05NalF3TVRFeE1Ea3hPVE13V2hjTk1qa3dNVEE1TURreE9UTXdXakIxTVFzd0NRWURWUVFHRXdKVFFURW1NQ1FHQTFVRUNoTWRUV0Y0YVcxMWJTQlRjR1ZsWkNCVVpXTm9JRk4xY0hCc2VTQk1WRVF4RmpBVUJnTlZCQXNURFZKcGVXRmthQ0JDY21GdVkyZ3hKakFrQmdOVkJBTVRIVlJUVkMwNE9EWTBNekV4TkRVdE16azVPVGs1T1RrNU9UQXdNREF6TUZZd0VBWUhLb1pJemowQ0FRWUZLNEVFQUFvRFFnQUVvV0NLYTBTYTlGSUVyVE92MHVBa0MxVklLWHhVOW5QcHgydmxmNHloTWVqeThjMDJYSmJsRHE3dFB5ZG84bXEwYWhPTW1Obzhnd25pN1h0MUtUOVVlS09DQWdjd2dnSURNSUd0QmdOVkhSRUVnYVV3Z2FLa2daOHdnWnd4T3pBNUJnTlZCQVFNTWpFdFZGTlVmREl0VkZOVWZETXRaV1F5TW1ZeFpEZ3RaVFpoTWkweE1URTRMVGxpTlRndFpEbGhPR1l4TVdVME5EVm1NUjh3SFFZS0NaSW1pWlB5TEdRQkFRd1BNems1T1RrNU9UazVPVEF3TURBek1RMHdDd1lEVlFRTURBUXhNVEF3TVJFd0R3WURWUVFhREFoU1VsSkVNamt5T1RFYU1CZ0dBMVVFRHd3UlUzVndjR3g1SUdGamRHbDJhWFJwWlhNd0hRWURWUjBPQkJZRUZFWCtZdm1tdG5Zb0RmOUJHYktvN29jVEtZSzFNQjhHQTFVZEl3UVlNQmFBRkp2S3FxTHRtcXdza0lGelZ2cFAyUHhUKzlObk1Ic0dDQ3NHQVFVRkJ3RUJCRzh3YlRCckJnZ3JCZ0VGQlFjd0FvWmZhSFIwY0RvdkwyRnBZVFF1ZW1GMFkyRXVaMjkyTG5OaEwwTmxjblJGYm5KdmJHd3ZVRkphUlVsdWRtOXBZMlZUUTBFMExtVjRkR2RoZW5RdVoyOTJMbXh2WTJGc1gxQlNXa1ZKVGxaUFNVTkZVME5CTkMxRFFTZ3hLUzVqY25Rd0RnWURWUjBQQVFIL0JBUURBZ2VBTUR3R0NTc0dBUVFCZ2pjVkJ3UXZNQzBHSlNzR0FRUUJnamNWQ0lHR3FCMkUwUHNTaHUyZEpJZk8reG5Ud0ZWbWgvcWxaWVhaaEQ0Q0FXUUNBUkl3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdNR0NDc0dBUVVGQndNQ01DY0dDU3NHQVFRQmdqY1ZDZ1FhTUJnd0NnWUlLd1lCQlFVSEF3TXdDZ1lJS3dZQkJRVUhBd0l3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUloQUxFL2ljaG1uV1hDVUtVYmNhM3ljaThvcXdhTHZGZEhWalFydmVJOXVxQWJBaUE5aEM0TThqZ01CQURQU3ptZDJ1aVBKQTZnS1IzTEUwM1U3NWVxYkMvclhBPT0=","productionCertificateSecret":"CkYsEXfV8c1gFHAtFWoZv73pGMvh\/Qyo4LzKM2h\/8Hg=","productionCertificateRequestID":"30368","privateKey":"LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR0VBZ0VBTUJBR0J5cUdTTTQ5QWdFR0JTdUJCQUFLQkcwd2F3SUJBUVFnMGlkcmFmaDNPcHFyd012NXhhaW4KWFAwRldvamJWRUw0aFFCbG1hWnRuZXloUkFOQ0FBUW9RcnFsUUVYNFc2N2NKUFJKVXpHUkxOSTVac0R3V21TRgpWM0dRVkVxRUorV2Zua2tVTG5wc3ZXMVNja2NJdmJiSzJNL2NTNXB5cm5WSW02WllrcUh4Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K","publicKey":"LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZZd0VBWUhLb1pJemowQ0FRWUZLNEVFQUFvRFFnQUVLRUs2cFVCRitGdXUzQ1QwU1ZNeGtTelNPV2JBOEZwawpoVmR4a0ZSS2hDZmxuNTVKRkM1NmJMMXRVbkpIQ0wyMnl0alAzRXVhY3E1MVNKdW1XSktoOFE9PQotLS0tLUVORCBQVUJMSUMgS0VZLS0tLS0K","csrKey":"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQnhqQ0NBV3NDQVFBd1F6RU9NQXdHQTFVRUF3d0ZWRk5VUTA4eEVUQVBCZ05WQkFzTUNGUlRWRU5QTFZOQgpNUkV3RHdZRFZRUUtEQWhVVTFSRFR5MVRRVEVMTUFrR0ExVUVCaE1DVTBFd1ZqQVFCZ2NxaGtqT1BRSUJCZ1VyCmdRUUFDZ05DQUFRb1FycWxRRVg0VzY3Y0pQUkpVekdSTE5JNVpzRHdXbVNGVjNHUVZFcUVKK1dmbmtrVUxucHMKdlcxU2NrY0l2YmJLMk0vY1M1cHlyblZJbTZaWWtxSHhvSUhJTUlIRkJna3Foa2lHOXcwQkNRNHhnYmN3Z2JRdwpKQVlKS3dZQkJBR0NOeFFDQkJjVEZWUlRWRnBCVkVOQkxVTnZaR1V0VTJsbmJtbHVaekNCaXdZRFZSMFJCSUdECk1JR0FwSDR3ZkRFZE1Cc0dBMVVFQkF3VU1TMVRSRk5CZkRJdFJrZEVVM3d6TFZORVJrY3hIekFkQmdvSmtpYUoKay9Jc1pBRUJEQTh6TURBd01EQXdNREF3TURBd01ETXhEVEFMQmdOVkJBd01CREV4TURBeEVUQVBCZ05WQkJvTQpDRkpOVWtVeE1qTTBNUmd3RmdZRFZRUVBEQTlVY21GdWMzQnZjblJoZEdsdmJuTXdDZ1lJS29aSXpqMEVBd0lEClNRQXdSZ0loQVAwMks4L1VkcjF2Z2xQVGx0SHhxVEFCVWxiUVVZekxWQjZaYXlzdDU4WUFBaUVBblZMZWt5R3QKeDhhaVQzZ2Q2T3A5NmsxMkxSb1ZuSVFndVlSQS9md2FOdW89Ci0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=","configData":"DQogICAgICAgICAgICBvaWRfc2VjdGlvbiA9IE9JRHMNCiAgICAgICAgICAgIFsgT0lEcyBdDQogICAgICAgICAgICBjZXJ0aWZpY2F0ZVRlbXBsYXRlTmFtZT0gMS4zLjYuMS40LjEuMzExLjIwLjINCg0KICAgICAgICAgICAgWyByZXEgXQ0KICAgICAgICAgICAgZGVmYXVsdF9iaXRzIAk9IDIwNDgNCiAgICAgICAgICAgIGVtYWlsQWRkcmVzcyAJPSBlbWFpbEBnbWFpbC5jb20NCiAgICAgICAgICAgIHJlcV9leHRlbnNpb25zCT0gdjNfcmVxDQogICAgICAgICAgICB4NTA5X2V4dGVuc2lvbnMgCT0gdjNfY2ENCiAgICAgICAgICAgIHByb21wdCA9IG5vDQogICAgICAgICAgICBkZWZhdWx0X21kID0gc2hhMjU2DQogICAgICAgICAgICByZXFfZXh0ZW5zaW9ucyA9IHJlcV9leHQNCiAgICAgICAgICAgIGRpc3Rpbmd1aXNoZWRfbmFtZSA9IGRuDQoNCiAgICAgICAgICAgIFsgdjNfcmVxIF0NCiAgICAgICAgICAgIGJhc2ljQ29uc3RyYWludHMgPSBDQTpGQUxTRQ0KICAgICAgICAgICAga2V5VXNhZ2UgPSBkaWdpdGFsU2lnbmF0dXJlLCBub25SZXB1ZGlhdGlvbiwga2V5RW5jaXBoZXJtZW50DQoNCiAgICAgICAgICAgIFtyZXFfZXh0XQ0KICAgICAgICAgICAgY2VydGlmaWNhdGVUZW1wbGF0ZU5hbWUgPSBBU04xOlBSSU5UQUJMRVNUUklORzpUU1RaQVRDQS1Db2RlLVNpZ25pbmcNCiAgICAgICAgICAgIHN1YmplY3RBbHROYW1lID0gZGlyTmFtZTphbHRfbmFtZXMNCg0KICAgICAgICAgICAgWyB2M19jYSBdDQoNCiAgICAgICAgICAgICMgRXh0ZW5zaW9ucyBmb3IgYSB0eXBpY2FsIENBDQoNCiAgICAgICAgICAgICMgUEtJWCByZWNvbW1lbmRhdGlvbi4NCg0KICAgICAgICAgICAgc3ViamVjdEtleUlkZW50aWZpZXIgPSBoYXNoDQoNCiAgICAgICAgICAgIGF1dGhvcml0eUtleUlkZW50aWZpZXIgPSBrZXlpZDphbHdheXMsaXNzdWVyOmFsd2F5cw0KDQogICAgICAgICAgICBbIGRuIF0NCiAgICAgICAgICAgIENOID0gVFNUQ08gIAkJCQkgICAgICAgICAgICAgICAgICAgICMgQ29tbW9uIE5hbWUNCiAgICAgICAgICAgIEMgPSBTQQkJCQkJCQkgICAgICAgICAgICAjIENvdW50cnkgQ29kZSBlLmcgU0ENCiAgICAgICAgICAgIE9VID0gVFNUQ08tU0EJCQkJCQkJIyBPcmdhbml6YXRpb24gVW5pdCBOYW1lDQogICAgICAgICAgICBPID0gVFNUQ08tU0EJCQkJCQkJICAgICAgICAjIE9yZ2FuaXphdGlvbiBOYW1lDQoNCiAgICAgICAgICAgIFthbHRfbmFtZXNdDQogICAgICAgICAgICBTTiA9IDEtU0RTQXwyLUZHRFN8My1TREZHCQkJCSAgICAgICAgICAgICAgICAgICAgIyBFR1MgU2VyaWFsIE51bWJlciAxLUFCQ3wyLVBRUnwzLVhZWg0KICAgICAgICAgICAgVUlEID0gMzAwMDAwMDAwMDAwMDAzCQkJCQkJICAgICAgICAgICAgICAgICMgT3JnYW5pemF0aW9uIElkZW50aWZpZXIgKFZBVCBOdW1iZXIpDQogICAgICAgICAgICB0aXRsZSA9IDExMDAJCQkJCQkJCSAgICAjIEludm9pY2UgVHlwZQ0KICAgICAgICAgICAgcmVnaXN0ZXJlZEFkZHJlc3MgPSBSTVJFMTIzNCAgCSAJCQkjIEFkZHJlc3MNCiAgICAgICAgICAgIGJ1c2luZXNzQ2F0ZWdvcnkgPSBUcmFuc3BvcnRhdGlvbnMJCQkJCSMgQnVzaW5lc3MgQ2F0ZWdvcnkNCiAgICAgICAg"}}']);
+                    ->update($payload);
+            } catch (\Throwable $e) {
+                $this->warn('Skipped zatca for location '.$location->id.': '.$e->getMessage());
+            }
         }
     }
     
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 
-        if (class_exists(\App\Utils\InstallUtil::class)) {
-            $installUtil = new \App\Utils\InstallUtil();
-            $installUtil->createExistingProductsVariationsToTemplate();
+        try {
+            if (class_exists(\App\Utils\InstallUtil::class)) {
+                $installUtil = new \App\Utils\InstallUtil();
+                $installUtil->createExistingProductsVariationsToTemplate();
+            }
+        } catch (\Throwable $e) {
+            $this->warn('Skipped product variation template: '.$e->getMessage());
         }
 
         DB::commit();
+            $this->info('Demo login is ready: username admin / password 123456');
         } catch (\Throwable $e) {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+
+            $adminExists = Schema::hasTable('users')
+                && DB::table('users')->where('username', 'admin')->exists();
+
+            if ($adminExists && DB::transactionLevel() > 0) {
+                DB::commit();
+                $this->ensureAdminCanLogin();
+                $this->warn('Optional demo data was skipped: '.$e->getMessage());
+                $this->info('You can still log in with username admin / password 123456');
+
+                return;
+            }
+
             if (DB::transactionLevel() > 0) {
                 DB::rollBack();
             }
-            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+
             throw $e;
+        }
+    }
+
+    private function seedCurrenciesIfNeeded(): void
+    {
+        try {
+            if (! Schema::hasTable('currencies') || DB::table('currencies')->count() > 0) {
+                return;
+            }
+
+            $this->call(CurrenciesTableSeeder::class);
+        } catch (\Throwable $e) {
+            $this->warn('Skipped currencies: '.$e->getMessage());
         }
     }
 
@@ -1863,19 +1896,165 @@ $packages = [
             return;
         }
 
-        $columns = array_flip(Schema::getColumnListing($table));
+        $columnMeta = collect(DB::select('SHOW COLUMNS FROM `'.$table.'`'))
+            ->keyBy(fn ($column) => $column->Field);
+
         $filtered = [];
         foreach ($rows as $row) {
-            $filtered[] = array_intersect_key($row, $columns);
+            $clean = [];
+            foreach ($row as $key => $value) {
+                if (! isset($columnMeta[$key])) {
+                    continue;
+                }
+
+                $meta = $columnMeta[$key];
+                $nullable = strtoupper((string) $meta->Null) === 'YES';
+                if ($value === null && ! $nullable) {
+                    $value = $this->defaultForNotNullColumn($meta);
+                }
+                $clean[$key] = $value;
+            }
+            $filtered[] = $clean;
         }
 
-        DB::table($table)->insert($filtered);
+        try {
+            DB::table($table)->insertOrIgnore($filtered);
+        } catch (\Throwable $e) {
+            $this->warn("Skipped {$table}: ".$e->getMessage());
+        }
+    }
+
+    private function defaultForNotNullColumn(object $column)
+    {
+        if ($column->Default !== null && $column->Default !== '') {
+            return $column->Default;
+        }
+
+        $type = strtolower((string) $column->Type);
+        if (str_contains($type, 'int')
+            || str_contains($type, 'decimal')
+            || str_contains($type, 'float')
+            || str_contains($type, 'double')
+            || str_contains($type, 'numeric')) {
+            return 0;
+        }
+
+        if (str_contains($type, 'date') || str_contains($type, 'time')) {
+            return now()->toDateTimeString();
+        }
+
+        return '';
+    }
+
+    private function ensurePermissions(array $names): void
+    {
+        if (! Schema::hasTable('permissions')) {
+            return;
+        }
+
+        $columns = array_flip(Schema::getColumnListing('permissions'));
+        $now = now();
+
+        foreach ($names as $name) {
+            $row = array_intersect_key([
+                'name' => $name,
+                'guard_name' => 'web',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ], $columns);
+
+            $exists = DB::table('permissions')
+                ->where('name', $name)
+                ->where('guard_name', 'web')
+                ->exists();
+
+            if (! $exists) {
+                DB::table('permissions')->insert($row);
+            }
+        }
+
+        $this->forgetPermissionCache();
+    }
+
+    private function syncRolePermissions($role, array $names): void
+    {
+        $this->ensurePermissions($names);
+        $permissions = Permission::query()
+            ->where('guard_name', 'web')
+            ->whereIn('name', $names)
+            ->get();
+
+        if ($permissions->isEmpty()) {
+            return;
+        }
+
+        $role->syncPermissions($permissions);
+    }
+
+    private function giveUserPermission($user, string $name): void
+    {
+        $this->ensurePermissions([$name]);
+        $permission = Permission::query()
+            ->where('name', $name)
+            ->where('guard_name', 'web')
+            ->first();
+
+        if ($permission) {
+            $user->givePermissionTo($permission);
+        }
+    }
+
+    private function forgetPermissionCache(): void
+    {
+        if (class_exists(\Spatie\Permission\PermissionRegistrar::class)) {
+            app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        }
+    }
+
+    private function createRole(array $attributes)
+    {
+        $columns = array_flip(Schema::getColumnListing('roles'));
+        $filtered = array_intersect_key($attributes, $columns);
+        $role = Role::firstOrCreate(
+            [
+                'name' => $filtered['name'],
+                'guard_name' => $filtered['guard_name'] ?? 'web',
+            ],
+            $filtered
+        );
+        $this->forgetPermissionCache();
+
+        return $role;
+    }
+
+    private function assignRoleIfUserExists($id, string $role)
+    {
+        $user = User::find($id);
+        if (! $user) {
+            $this->warn("Skipped role {$role} for missing user #{$id}");
+
+            return null;
+        }
+
+        try {
+            if (! $user->hasRole($role)) {
+                $user->assignRole($role);
+            }
+        } catch (\Throwable $e) {
+            $this->warn("Skipped role {$role} for user #{$id}: ".$e->getMessage());
+        }
+
+        return $user;
     }
 
     private function rawInsertIfTableExists(string $sql): void
     {
         if (preg_match('/INSERT INTO\s+`?([a-z0-9_]+)`?/i', $sql, $matches) !== 1) {
-            DB::insert($sql);
+            try {
+                DB::insert($sql);
+            } catch (\Throwable $e) {
+                $this->warn('Skipped SQL insert: '.$e->getMessage());
+            }
 
             return;
         }
@@ -1884,6 +2063,73 @@ $packages = [
             return;
         }
 
-        DB::insert($sql);
+        try {
+            DB::insert($sql);
+        } catch (\Throwable $e) {
+            $this->warn('Skipped '.$matches[1].': '.$e->getMessage());
+        }
+    }
+
+    private function ensureAdminCanLogin(): void
+    {
+        try {
+            $this->ensureAdminCanLoginInner();
+        } catch (\Throwable $e) {
+            $this->warn('Could not fully attach admin role: '.$e->getMessage());
+        }
+    }
+
+    private function ensureAdminCanLoginInner(): void
+    {
+        $user = User::where('username', 'admin')->first();
+        if (! $user) {
+            return;
+        }
+
+        $businessId = (int) ($user->business_id ?: 1);
+        if (empty($user->business_id) && Schema::hasTable('business')) {
+            $user->business_id = DB::table('business')->value('id') ?: $businessId;
+            $user->save();
+            $businessId = (int) $user->business_id;
+        }
+
+        if (Schema::hasColumn('users', 'allow_login')) {
+            $user->allow_login = 1;
+        }
+        if (Schema::hasColumn('users', 'status')) {
+            $user->status = 'active';
+        }
+        $user->save();
+
+        $this->ensurePermissions([
+            'sell.view', 'sell.create', 'sell.update', 'sell.delete',
+            'dashboard.data', 'access_all_locations',
+        ]);
+
+        $roleName = 'Admin#'.$businessId;
+        $role = $this->createRole([
+            'name' => $roleName,
+            'business_id' => $businessId,
+            'guard_name' => 'web',
+            'is_default' => 1,
+        ]);
+
+        if ($role && ! $user->hasRole($role->name)) {
+            $user->assignRole($role->name);
+        }
+    }
+
+    private function info(string $message): void
+    {
+        if ($this->command) {
+            $this->command->info($message);
+        }
+    }
+
+    private function warn(string $message): void
+    {
+        if ($this->command) {
+            $this->command->warn($message);
+        }
     }
 }

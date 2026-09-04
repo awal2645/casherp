@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Currency;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CurrenciesTableSeeder extends Seeder
 {
@@ -14,6 +15,10 @@ class CurrenciesTableSeeder extends Seeder
      */
     public function run()
     {
+        if (! Schema::hasTable('currencies')) {
+            return;
+        }
+
         $data = [
             ['id' => '1', 'country' => 'Albania', 'currency' => 'Leke', 'code' => 'ALL', 'symbol' => 'Lek',
                 'thousand_separator' => ',', 'decimal_separator' => '.', 'created_at' => null, 'updated_at' => null, ],
@@ -284,9 +289,9 @@ class CurrenciesTableSeeder extends Seeder
             ['id' => '134', 'country' => 'Bangladesh', 'currency' => 'Taka', 'code' => 'BDT', 'symbol' => '৳', 'thousand_separator' => ',', 'decimal_separator' => '.', 'created_at' => null, 'updated_at' => null],
         ];
 
-        Currency::insert($data);
+        DB::table('currencies')->insertOrIgnore($data);
 
-        Currency::insert([
+        DB::table('currencies')->insertOrIgnore([
             ['country' => 'Algerie', 'currency' => 'Algerian dinar', 'code' => 'DZD', 'symbol' => 'د.ج', 'thousand_separator' => ' ', 'decimal_separator' => '.', 'created_at' => null, 'updated_at' => null],
             ['country' => 'United Arab Emirates', 'currency' => 'United Arab Emirates dirham', 'code' => 'AED', 'symbol' => 'د.إ', 'thousand_separator' => ',', 'decimal_separator' => '.', 'created_at' => null, 'updated_at' => null],
             ['country' => 'Uganda', 'currency' => 'Uganda shillings', 'code' => 'UGX', 'symbol' => 'USh', 'thousand_separator' => ',', 'decimal_separator' => '.', 'created_at' => null, 'updated_at' => null],

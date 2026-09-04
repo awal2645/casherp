@@ -453,8 +453,25 @@ return new class extends Migration
             $table->string('guard_name');
             $table->unsignedInteger('business_id')->nullable();
             $table->boolean('is_default')->default(0);
+            $table->boolean('is_service_staff')->default(0);
             $table->timestamps();
         });
+
+        if (Schema::hasTable('roles') && ! Schema::hasColumn('roles', 'business_id')) {
+            Schema::table('roles', function (Blueprint $table) {
+                $table->unsignedInteger('business_id')->nullable();
+            });
+        }
+        if (Schema::hasTable('roles') && ! Schema::hasColumn('roles', 'is_default')) {
+            Schema::table('roles', function (Blueprint $table) {
+                $table->boolean('is_default')->default(0);
+            });
+        }
+        if (Schema::hasTable('roles') && ! Schema::hasColumn('roles', 'is_service_staff')) {
+            Schema::table('roles', function (Blueprint $table) {
+                $table->boolean('is_service_staff')->default(0);
+            });
+        }
 
         $this->createIfMissing('model_has_permissions', function (Blueprint $table) {
             $table->unsignedBigInteger('permission_id');
